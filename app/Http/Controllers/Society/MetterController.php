@@ -3,19 +3,34 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\BuildingRepository;
+use App\Http\Repository\MeterRepository;
+use App\Models\Building;
 use App\Models\ElectricityMeter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MetterController extends Controller
 {
+    private $userId = null;
+    private $meterRepository = null;
+    private $buildingRepository = null;
+
+    public function __construct(MeterRepository $meterRepository, BuildingRepository $buildingRepository)
+    {
+       $societyUser = Auth::guard('society_user')->user();
+       $this->userId = $societyUser->id;
+       $this->meterRepository = $meterRepository;
+       $this->buildingRepository = $buildingRepository;
+    }
   /**
      * Display a listing of the resource.
      */
     public function index()
     {
 
-       $meter = ElectricityMeter::all();
-        return view('admin.society_user.index', compact('meter'));
+        $meters = ElectricityMeter::with('building')->paginate(10);
+        return view('society.meter.index', compact('meters'));
     }
 
     /**
@@ -23,8 +38,8 @@ class MetterController extends Controller
      */
     public function create()
     {
-        $building = Building::all();
-        return view('admin.society_user.create', compact('building'));
+        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId); 
+        return view('society.meter.create', compact('buildings'));
     }
 
     /**
@@ -34,42 +49,14 @@ class MetterController extends Controller
     {
 
         $request->validate([
-            'title' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-            'reg_no' => 'nullable|numeric',
-            'reg_year' => 'nullable|digits:4|integer|min:1900|max:' . date('Y'),
-            'address' => 'required|string|max:500',
-            'desc' => 'nullable|string|max:1000',
-            'mobile_no' => 'required|regex:/^\+?[0-9]{10,15}$/|unique:society_users,mobile_no',
+            'building_id' => 'required|exists:buildings,id',
+            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter'
+        ]); 
+        $insertData = $request->all();
+        $insertData['society_id'] = $this->userId;
+        ElectricityMeter::create($request->all());
 
-            'email' => 'required|email|unique:society_users,email',
-            'password' => 'required|confirmed|min:8',
-            'building_count' => 'required|integer|min:1',
-            'lift_count' => 'nullable|integer|min:1',
-            'meter_count' => 'required|integer|min:1',
-            'logo' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
-            'file2' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
-        ]);
-        $updatedRequest = $request->all();
-        if ($request->hasFile('logo')) {
-            $file = $request->file('logo');
-            $fileName = time() . '-' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('uploads/society/logo', $fileName, 'public'); // Stored in storage/app/public/uploads
-        $updatedRequest['logo'] = $fileName;
-        }
-
-        if ($request->hasFile('society_image')) {
-            $file = $request->file('society_image');
-            $fileName = time() . '-' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('uploads/society/img', $fileName, 'public'); // Stored in storage/app/public/uploads
-           // $request->merge(['society_image' => $fileName]);
-            $updatedRequest['society_image'] = $fileName;
-        }
-
-        //$allData->password = Hash::make($request->password);
-        SocietyUser::create($updatedRequest);
-
-        return redirect()->route('admin.society-user.index')->with('success', 'Society created successfully.');
+        return redirect()->route('society.meter.index')->with('success', 'Meter created successfully.');
     }
     /**
      * Display the specified resource.
@@ -82,59 +69,33 @@ class MetterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SocietyUser $societyUser)
-    {
-        $societyUserTypes = SocietyUserType::all();
-        return view('admin.society_user.edit', compact('societyUser','societyUserTypes'));
+    public function edit(ElectricityMeter $meter)
+    { 
+        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId); 
+        return view('society.meter.edit', compact('meter','buildings'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, SocietyUser $societyUser)
+    public function update(Request $request, ElectricityMeter $meter)
     {
+        
         $request->validate([
-            'name' => 'required|unique:user_types,name,' . $societyUser->id,
+            'building_id' => 'required|exists:buildings,id',
+            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter,' . $meter->id 
         ]);
+        $insert = $request->all();
+        $insertData['society_id'] = $this->userId;
+        $meter->update($insert);
 
-
-        if ($request->hasFile('logo')) {
-            $file = $request->file('logo');
-            $fileName = time() . '-' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('uploads/society/logo', $fileName, 'public'); // Stored in storage/app/public/uploads
-           // $request->merge(['logo' => $fileName]);
-            $societyUser->logo = $fileName;
-            if($societyUser->logo){
-                $imagePath = Storage::url('public/uploads/society/logo/' . $societyUser->logo);
-                File::delete($imagePath);
-            }
-        }
-
-        if ($request->hasFile('society_image')) {
-            $file = $request->file('society_image');
-            $fileName = time() . '-' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('uploads/society/img', $fileName, 'public'); // Stored in storage/app/public/uploads
-            //$request->merge(['' => $fileName]);
-            $societyUser->society_image = $fileName;
-            if($societyUser->society_image){
-                $imagePath = Storage::url('public/uploads/society/logo/' . $societyUser->society_image);
-                File::delete($imagePath);
-            }
-        }
-        if(! $request->input('password'))
-            $request->request->remove('password');
-
-
-
-        $societyUser->update($request->all());
-
-        return redirect()->route('admin.society-user.index')->with('success', 'User type updated successfully.');
+        return redirect()->route('society.meter.index')->with('success', 'Electricity Meter type updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SocietyUser $societyUser)
+    public function destroy(ElectricityMeter $electricityMeter)
     {
        // $userType->delete();
 

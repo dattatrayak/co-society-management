@@ -10,8 +10,7 @@
 
         <div class="row">
 
-            <div class="col-xl-12">
-                @include('society.layout.error')
+            <div class="col-xl-12"> 
                 <form action="{{ route('society.society-user.update', $societyUser->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')

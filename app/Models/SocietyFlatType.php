@@ -15,4 +15,5 @@ class SocietyFlatType extends Model
     {
         return $this->hasMany(Flat::class, 'society_flat_types_id');
     }
+    
 }

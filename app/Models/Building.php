@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-class building extends Model
+class Building extends Model
 {
     use HasFactory;
 
@@ -26,6 +26,10 @@ class building extends Model
         public function flats()
         {
             return $this->hasMany(Flat::class, 'building_id');
+        }
+        public function societyMember()
+        {
+            return $this->hasMany(SocietyMember::class, 'building_id');
         }
         // public function society()
         // {

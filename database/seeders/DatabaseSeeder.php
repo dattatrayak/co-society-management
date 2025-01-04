@@ -128,6 +128,18 @@ class DatabaseSeeder extends Seeder
                 'order' => 1,
             ]
         );
+        Menu::create(
+            [
+                'name' => 'Society Menu',
+                'url' => 'admin/society-menus',
+                'icon' => 'fa-newspaper-o',
+                'page_heading' => 'Society Menu Management',
+                'sub_heading' => null,
+                'parent_id' => null,
+                'order' => 6,
+            ]
+        );
+        
 
         SocietyUserType::create([
             'name' => 'Manager',
@@ -206,12 +218,12 @@ class DatabaseSeeder extends Seeder
         $buildingMagement = SocietyMenu::create(
             [
                 'name' => 'Building Manage',
-                'url' => 'society/society-user-types-permissions',
+                'url' => 'society/building',
                 'icon' => 'fa-building-o',
                 'page_heading' => 'Building Management',
                 'sub_heading' => null,
                 'parent_id' => null,
-                'order' => 0,
+                'order' => 2,
             ]
         );
          SocietyMenu::create(
@@ -236,6 +248,19 @@ class DatabaseSeeder extends Seeder
                 'order' => 2,
             ]
         );
+        SocietyMenu::create(
+            [
+                'name' => 'Member Management',
+                'url' => 'society/member',
+                'icon' => 'fa-hospital-o',
+                'page_heading' => 'Society Member Managment',
+                'sub_heading' => null,
+                'parent_id' => null,
+                'order' =>3,
+            ]
+        );
+       
+        
         SocietyFlatType::create([
             'name' => '1 RK',
             'description' => null,

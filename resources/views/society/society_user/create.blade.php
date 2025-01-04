@@ -5,12 +5,10 @@
         @include('society.layout.site_header')
 
         <div class="row">
-            <div class="col-xl-12">
-                @include('society.layout.error')
+            <div class="col-xl-12"> 
 
                 <form action="{{ route('society.society-user.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
+                    @csrf 
                     <h2>User Add</h2>
                     <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                         <div class="progress-fill"></div>

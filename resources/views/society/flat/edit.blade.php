@@ -6,8 +6,7 @@
 
         <div class="row">
 
-            <div class="col-xl-12">
-                @include('society.layout.error')
+            <div class="col-xl-12"> 
                 <form action="{{ route('society.flat.update', $flat->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
