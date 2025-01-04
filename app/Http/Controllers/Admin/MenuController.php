@@ -90,5 +90,4 @@ class MenuController extends Controller
         $menu->delete();
         return redirect()->route('admin.menus.index')->with('success', 'Menu deleted successfully.');
     }
-
 }

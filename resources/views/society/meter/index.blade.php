@@ -17,8 +17,8 @@
                     </thead>
                     <tbody>
                         @foreach ($meters as $meter)
-                            <tr> 
-                                 <td>{{ $meter->building->name }}</td>
+                            <tr>
+                                <td>{{ $meter->building->name }}</td>
                                 <td>{{ $meter->electricity_meter }}</td>
                                 <td>
                                     <a href="{{ route('society.meter.edit', $meter) }}" class="btn btn-warning">Edit</a>
@@ -34,6 +34,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center">
+                    {{ $meters->links('vendor.pagination.bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>

@@ -62,10 +62,10 @@ class SocietyMenuController extends Controller
      */
     public function edit(SocietyMenu $societyMenu)
     {
-        $societyMenuEdit= $societyMenu;
+        $societyMenuEdit = $societyMenu;
         $societyMenuList = SocietyMenu::whereNull('parent_id')->with('children.children')->orderBy('order')->get();
 
-        return view('admin.society_menus.edit', compact('societyMenuEdit','societyMenuList'));
+        return view('admin.society_menus.edit', compact('societyMenuEdit', 'societyMenuList'));
     }
 
     /**
@@ -93,5 +93,4 @@ class SocietyMenuController extends Controller
         $societyMenu->delete();
         return redirect()->route('admin.society-menus.index')->with('success', 'Menu deleted successfully.');
     }
-
 }

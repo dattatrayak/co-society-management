@@ -240,7 +240,7 @@ class DatabaseSeeder extends Seeder
         SocietyMenu::create(
             [
                 'name' => 'Meter Manage',
-                'url' => 'society/flat',
+                'url' => 'society/meter',
                 'icon' => 'fa-dedent',
                 'page_heading' => 'Meter Management',
                 'sub_heading' => null,

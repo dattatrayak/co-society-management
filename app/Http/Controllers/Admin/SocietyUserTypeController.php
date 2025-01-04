@@ -73,8 +73,8 @@ class SocietyUserTypeController extends Controller
      */
     public function destroy(SocietyUserType $societyUserType)
     {
-       // $societyUserType->delete();
+        // $societyUserType->delete();
 
-       // return redirect()->route('society-user-types.index')->with('success', 'User type deleted successfully.');
+        // return redirect()->route('society-user-types.index')->with('success', 'User type deleted successfully.');
     }
 }

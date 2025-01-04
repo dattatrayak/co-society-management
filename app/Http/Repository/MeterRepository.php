@@ -3,7 +3,7 @@
 
 namespace App\Http\Repository;
 
-use App\Models\ElectricityMeter; 
+use App\Models\ElectricityMeter;
 use Illuminate\Support\Facades\DB;
 
 class MeterRepository

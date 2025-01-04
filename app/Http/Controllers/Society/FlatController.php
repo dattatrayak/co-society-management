@@ -52,22 +52,17 @@ class FlatController extends Controller
         if (!empty($search)) {
             $flats->where('flat_no', 'LIKE', "%{$search}%")
                   ->orWhere('desc', 'LIKE', "%{$search}%");
-        }
-
-        // Filter by building if selected
+        } 
         if ($building_id) {
             $flats->where('building_id', $building_id);
         }
-
-        // Filter by flat type if selected
+ 
         if ($flat_type) {
             $flats->where('society_flat_types_id', $flat_type);
         }
-
-        // Paginate results
+ 
         $flats = $flats->with(['building', 'flatType', 'society'])->paginate(10);
-
-        // Preserve search parameters in pagination links
+ 
         $flats->appends($request->only(['search', 'building_id', 'flat_type']));
 
         return view('society.flat.index', compact('flats','buildings','societyFlatType'));

@@ -3,7 +3,7 @@
 
 namespace App\Http\Repository;
 
-use App\Models\Building; 
+use App\Models\Building;
 use Illuminate\Support\Facades\DB;
 
 class BuildingRepository

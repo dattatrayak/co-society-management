@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function dashboard(){
+    public function dashboard()
+    {
         return view('admin.dashboard.index');
     }
     public function index()

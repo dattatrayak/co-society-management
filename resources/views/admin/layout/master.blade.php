@@ -43,16 +43,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js">
     </script>
 
-<!-- FontAwesome CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-<!-- FontAwesome Icon Picker CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.min.css">
+    <!-- FontAwesome Icon Picker CSS -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.min.css">
 
-<!-- FontAwesome Icon Picker JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js"></script>
+    <!-- FontAwesome Icon Picker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js">
+    </script>
 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
 
     <script>
         @yield('script')
@@ -61,21 +63,21 @@
             @yield('scriptDockReady')
             // Attach the icon picker to the input field
             $('#icon').iconpicker({
-            placement: 'bottomRight',
-            hideOnSelect: true,
-            inputSearch: true,
-        });
+                placement: 'bottomRight',
+                hideOnSelect: true,
+                inputSearch: true,
+            });
 
-        // Update the preview on icon change
-        $('#icon').on('iconpickerSelected', function (event) {
-            $('#iconPreview').attr('class', event.iconpickerValue); // Update the icon preview
-        });
+            // Update the preview on icon change
+            $('#icon').on('iconpickerSelected', function(event) {
+                $('#iconPreview').attr('class', event.iconpickerValue); // Update the icon preview
+            });
 
-        // Attach the picker to the button
-        $('#iconPickerButton').on('click', function () {
-            alert('dsfasdfas ');
-            $('#icon').iconpicker('toggle'); // Open or close the picker
-        });
+            // Attach the picker to the button
+            $('#iconPickerButton').on('click', function() {
+                alert('dsfasdfas ');
+                $('#icon').iconpicker('toggle'); // Open or close the picker
+            });
         });
     </script>
 

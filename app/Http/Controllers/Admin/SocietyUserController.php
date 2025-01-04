@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class SocietyUserController extends Controller
 {
-   /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
 
-       $societies = SocietyUser::all();
+        $societies = SocietyUser::all();
         return view('admin.society_user.index', compact('societies'));
     }
 
@@ -59,14 +59,14 @@ class SocietyUserController extends Controller
             $file = $request->file('logo');
             $fileName = time() . '-' . $file->getClientOriginalName();
             $filePath = $file->storeAs('uploads/society/logo', $fileName, 'public'); // Stored in storage/app/public/uploads
-        $updatedRequest['logo'] = $fileName;
+            $updatedRequest['logo'] = $fileName;
         }
 
         if ($request->hasFile('society_image')) {
             $file = $request->file('society_image');
             $fileName = time() . '-' . $file->getClientOriginalName();
             $filePath = $file->storeAs('uploads/society/img', $fileName, 'public'); // Stored in storage/app/public/uploads
-           // $request->merge(['society_image' => $fileName]);
+            // $request->merge(['society_image' => $fileName]);
             $updatedRequest['society_image'] = $fileName;
         }
 
@@ -89,7 +89,7 @@ class SocietyUserController extends Controller
     public function edit(SocietyUser $societyUser)
     {
         $societyUserTypes = SocietyUserType::all();
-        return view('admin.society_user.edit', compact('societyUser','societyUserTypes'));
+        return view('admin.society_user.edit', compact('societyUser', 'societyUserTypes'));
     }
 
     /**
@@ -106,9 +106,9 @@ class SocietyUserController extends Controller
             $file = $request->file('logo');
             $fileName = time() . '-' . $file->getClientOriginalName();
             $filePath = $file->storeAs('uploads/society/logo', $fileName, 'public'); // Stored in storage/app/public/uploads
-           // $request->merge(['logo' => $fileName]);
+            // $request->merge(['logo' => $fileName]);
             $societyUser->logo = $fileName;
-            if($societyUser->logo){
+            if ($societyUser->logo) {
                 $imagePath = Storage::url('public/uploads/society/logo/' . $societyUser->logo);
                 File::delete($imagePath);
             }
@@ -120,12 +120,12 @@ class SocietyUserController extends Controller
             $filePath = $file->storeAs('uploads/society/img', $fileName, 'public'); // Stored in storage/app/public/uploads
             //$request->merge(['' => $fileName]);
             $societyUser->society_image = $fileName;
-            if($societyUser->society_image){
+            if ($societyUser->society_image) {
                 $imagePath = Storage::url('public/uploads/society/logo/' . $societyUser->society_image);
                 File::delete($imagePath);
             }
         }
-        if(! $request->input('password'))
+        if (! $request->input('password'))
             $request->request->remove('password');
 
 
@@ -140,8 +140,8 @@ class SocietyUserController extends Controller
      */
     public function destroy(SocietyUser $societyUser)
     {
-       // $userType->delete();
+        // $userType->delete();
 
-       // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
+        // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
     }
 }

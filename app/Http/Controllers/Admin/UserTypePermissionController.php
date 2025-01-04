@@ -8,6 +8,7 @@ use App\Models\UserType;
 use App\Models\UserTypePermission;
 use Illuminate\Http\Request;
 use App\Http\Repository\MenuRepository;
+
 class UserTypePermissionController extends Controller
 {
     /**
@@ -39,7 +40,7 @@ class UserTypePermissionController extends Controller
             'permissions' => 'required|array',
         ]);
         foreach ($request->permissions as $menu_id => $menuPermissions) {
-           // dump($menuPermissions);
+            // dump($menuPermissions);
             $menuAccess =  array(
                 'user_type_id' => $request->user_type,
                 'menu_id' => $menu_id,
@@ -50,14 +51,13 @@ class UserTypePermissionController extends Controller
                 'delete_own' => isset($menuPermissions['delete_own']),
                 'delete_other' => isset($menuPermissions['delete_other']),
             );
-            UserTypePermission::updateOrCreate(  [
+            UserTypePermission::updateOrCreate([
                 'user_type_id' => $request->user_type,
                 'menu_id' => $menu_id,
-            ],$menuAccess);
-
+            ], $menuAccess);
         }
 
-      /*  foreach ($request->permissions as $userTypeId => $menuPermissions) {
+        /*  foreach ($request->permissions as $userTypeId => $menuPermissions) {
             foreach ($menuPermissions as $menuId => $permissions) {
                 UserTypePermission::updateOrCreate(
                     [
