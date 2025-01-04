@@ -138,7 +138,29 @@ class FlatController extends Controller
 
         return redirect()->route('society.flat.index')->with('success', 'Flats updated successfully.');
     }
+    public function getFlatsByBuilding($building_id,)
+    {
+        $flats = Flat::where('society_id', $this->societyUserId)
+        ->where('building_id', $building_id)
+        ->with('flatType:id,name') // Load only 'id' and 'name' from flatType
+        ->get(['id', 'flat_no', 'society_flat_types_id']);
+        $flatsData = $flats->map(function ($flat) {
+            return [
+                'id' => $flat->id,
+                'flat_no' => $flat->flat_no,
+                'flatType' => $flat->flatType->name, // Accessing the flatType's name
+            ];
+        });
+        
+        return response()->json($flatsData);
+    }
 
+    // public function getFlatsByBuilding($building_id,$flatNo)
+    // {
+    //     $flats = Flat::where('building_id', $building_id)->where('flat_no', 'LIKE', '%' . $flatNo . '%')->take(10)->get(['id', 'flat_no']);
+    
+    //     return response()->json($flats);
+    // }
     /**
      * Remove the specified resource from storage.
      */

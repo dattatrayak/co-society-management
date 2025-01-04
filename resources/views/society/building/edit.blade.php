@@ -7,7 +7,6 @@
         <div class="row">
 
             <div class="col-xl-12">
-                @include('society.layout.error')
                 <form action="{{ route('society.building.update', $building->id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf

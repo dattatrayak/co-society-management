@@ -67,4 +67,8 @@ class SocietyUser extends Authenticatable
     {
         return $this->hasMany(ElectricityMeter::class);
     }
+    public function societyMember()
+    {
+        return $this->hasMany(SocietyMember::class);
+    }
 }

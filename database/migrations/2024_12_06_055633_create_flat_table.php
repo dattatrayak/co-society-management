@@ -19,13 +19,13 @@ return new class extends Migration
             $table->unsignedBigInteger('society_flat_types_id')->nullable();
             $table->integer(column: 'floor_number')->nullable();
             $table->decimal('maintance_per_month', 10, 2)->nullable();
-            $table->text('desc')->nullable();
+            $table->text('desc')->nullable();            
             $table->timestamps();
 
             $table->foreign('society_id')->references('id')->on('society_users')->onDelete('cascade');
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->foreign('society_flat_types_id')->references('id')->on('society_flat_types')->onDelete('cascade');
-            $table->unique(['society_id', 'building_id','flat_no'], 'unique_society_building_flat');
+            $table->unique(['society_id', 'building_id','flat_no'], 'unique_society_building_flat'); 
         });
     }
 

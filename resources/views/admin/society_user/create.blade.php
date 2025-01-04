@@ -73,7 +73,7 @@
                         <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea name="description" id="description" class="form-control" required>{{ old('description') }}</textarea>
+                                <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -115,70 +115,59 @@
                             </div> --}}
                         </div>
                         <div class="col-9">
+                            <h4>Society Building</h4>
 
-                            <div class="row border border-primary rounded m-2 p-3">
-                                <h4>Society Building</h4>
-                                <div class="col-6">
+                            <div class="row">
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="building_count">Building Name</label>
                                         <input type="text" name="building_name[]" id="building_name1"
                                             class="form-control" value="{{ old('building_name1') }}"
                                             placeholder="Building Name..">
                                     </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="lift_count">Total floor Count</label>
                                         <input type="text" name="floor[]" id="floor" class="form-control"
                                             value="{{ old('floor1') }}" required>
                                     </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="lift_count">Floor count start</label>
                                         <input type="text" name="flat_no_start[]" id="flat_no_start1"
                                             class="form-control" value="{{ old('flat_no_start1') }}"
                                             placeholder="Enter floor count start" required>
                                     </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="lift_count">Flat per Floor</label>
                                         <input type="text" name="flat_per_floor[]" id="flat_per_floor1"
                                             class="form-control" value="{{ old('flat_per_floor1') }}"
                                             placeholder="Enter floor count start" required>
                                     </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="lift_count">CCTV Count</label>
-                                        <input type="text" name="cctv[]" id="cctv1"
-                                            class="form-control" value="{{ old('cctv1') }}"
-                                            placeholder="Enter CCTV Count" >
+                                        <input type="text" name="cctv[]" id="cctv1" class="form-control"
+                                            value="{{ old('cctv1') }}" placeholder="Enter CCTV Count">
                                     </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
-                                        <label for="lift_count">lift Count</label>
-                                        <input type="text" name="lift[]" id="lift1"
-                                            class="form-control" value="{{ old('lift1') }}"
-                                            placeholder="Enter lift Count" >
+                                        <label for="lift_count">Lift Count</label>
+                                        <input type="text" name="lift[]" id="lift1" class="form-control"
+                                            value="{{ old('lift1') }}" placeholder="Enter lift Count">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="lift_count">Water tank Count</label>
-                                        <input type="text" name="water_tank[]" id="water_tank1"
-                                            class="form-control" value="{{ old('water_tank1') }}"
-                                            placeholder="Enter water tank Count" >
-                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                                     <div class="form-group">
                                         <label for="lift_count">Water tank Count</label>
-                                        <input type="text" name="water_tank[]" id="water_tank1"
-                                            class="form-control" value="{{ old('water_tank1') }}"
-                                            placeholder="Enter water tank Count" >
-                                    </div>
-                                    <div class="form-group border-upload">
-                                        <div class="col-6">
-                                            <div class="upload_dropZone">
-                                                Drag & Drop files here <br />or <br /> click to upload (Society Image)
-                                                <i class="fas fa-upload upload_icon"></i>
-                                                <input type="file" name="society_image" id="fileInput2" hidden>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="upload_gallery" id="previewGallery2">
-                                                <div class="show-img-wrapper">Preview image...</div>
-                                            </div>
-                                        </div>
+                                        <input type="text" name="water_tank[]" id="water_tank1" class="form-control"
+                                            value="{{ old('water_tank1') }}" placeholder="Enter water tank Count">
                                     </div>
                                 </div>
                             </div>
@@ -219,9 +208,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row ">
-
-
+                        <div class="row "> 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary mt-3">Add</button>
                             </div>
@@ -230,13 +217,13 @@
                 </form>
             </div>
         </div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-xl-12">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary mt-3">Add Building</button>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 

@@ -48,9 +48,9 @@ class SocietyUserController extends Controller
 
             'email' => 'required|email|unique:society_users,email',
             'password' => 'required|confirmed|min:8',
-            'building_count' => 'required|integer|min:1',
+            //'building_count' => 'required|integer|min:1',
             'lift_count' => 'nullable|integer|min:1',
-            'meter_count' => 'required|integer|min:1',
+            //'meter_count' => 'required|integer|min:1',
             'logo' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
             'file2' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
         ]);

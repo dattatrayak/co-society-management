@@ -16,6 +16,7 @@ use App\Http\Controllers\Society\DashbaordSocietyController;
 use App\Http\Controllers\Society\FlatController;
 use App\Http\Controllers\Society\MetterController;
 use App\Http\Controllers\Society\SiteUserController;
+use App\Http\Controllers\Society\SocietyMemberController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,5 +64,6 @@ Route::prefix('society')
         Route::resource('building', BuildingController::class);
         Route::resource('flat', FlatController::class);
         Route::resource('meter', MetterController::class);
-
+        Route::resource('member', SocietyMemberController::class);
+        Route::get('flats-by-building/{building_id}', [FlatController::class, 'getFlatsByBuilding']);
     });

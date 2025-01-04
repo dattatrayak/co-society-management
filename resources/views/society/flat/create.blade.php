@@ -5,8 +5,7 @@
         @include('society.layout.site_header')
 
         <div class="row">
-            <div class="col-xl-12">
-                @include('society.layout.error')
+            <div class="col-xl-12"> 
 
                 <form action="{{ route('society.flat.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf

@@ -6,3 +6,27 @@
 
 // If you want to add something do it here
 @import "custom";
+ 
+.suggestions-box {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.error {
+    color: red;
+    padding: 8px 12px;
+} 

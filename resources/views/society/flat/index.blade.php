@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </form>
-            <a href="{{ route('society.flat.create') }}" class="btn btn-primary float-end">Create new society</a>
+            <a href="{{ route('society.flat.create') }}" class="btn btn-primary float-end">Create new Flat</a>
 
             <form method="GET" action="{{ route('society.flat.index') }}">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Flat No">
