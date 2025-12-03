@@ -10,21 +10,22 @@ use App\Models\SocietyMember;
 use App\Models\SocietyUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
 class SocietyMemberController extends Controller
 {
 
-    protected $societyUserId; 
-    public function __construct( )
+    protected $societyUserId;
+    public function __construct()
     {
-        $this->societyUserId = Auth::guard('society_user')->user()->id; 
+        $this->societyUserId = Auth::guard('society_user')->user()->id;
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $members = SocietyMember::with('society', 'building')->paginate(10);
+        $members = SocietyMember::with('society', 'building', 'flats.flatType', 'flats.building')->paginate(10);
+
         return view('society.society_members.index', compact('members'));
     }
 
@@ -33,71 +34,97 @@ class SocietyMemberController extends Controller
      */
     public function create()
     {
-        $societies = SocietyUser::where('id',$this->societyUserId)->get();
+        $societies = SocietyUser::where('id', $this->societyUserId)->get();
         $buildings = Building::all();
         $societyFlatTypes = SocietyFlatType::pluck('name', 'id');
-        $flats = Flat::where('society_id',$this->societyUserId)->pluck('flat_no', 'id');
-        // dump($flat);
-        return view('society.society_members.create', compact('societies', 'buildings','societyFlatTypes'));
+        //$flats = Flat::where('society_id', $this->societyUserId)->pluck('flat_no', 'id');
+        $flats = Flat::with('building', 'flatType')
+            ->where('society_id', $this->societyUserId)
+            ->whereNull('society_member_id')
+            ->orderBy('flat_no', 'asc')
+            ->get();
+
+        return view('society.society_members.create', compact('societies', 'buildings', 'societyFlatTypes', 'flats'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'society_id' => 'required|exists:societies,id',
-            'building_id' => 'required|exists:buildings,id',
+        $validated = $request->validate([ 
             'name' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'permanent_address' => 'required|string|max:255',
             'pan' => 'nullable|string|max:10',
             'uid' => 'nullable|string|max:12',
             'email' => 'required|email|unique:society_members,email',
-            'password' => 'required|min:8',
+            //'password' => 'required|min:8',
             'mobile' => 'required|digits:10',
-            'gender' => 'nullable|in:Male,Female,Other',
-            'flat_no' => 'required|string',
-            'flat_type' => 'required|in:1 BHK,2 BHK,3 BHK,1 RK',
+            'gender' => 'nullable|in:Male,Female',
+            'flat_no' => 'required|array', 
         ]);
+        $lastFiveDigits =  $validated['mobile'];
+        $validated['password'] = bcrypt($lastFiveDigits);
+        $validated['society_id'] = $this->societyUserId;
+        $society_member = SocietyMember::create($validated);
 
-        $validated['password'] = bcrypt($validated['password']);
-        SocietyMember::create($validated);
-
-        return redirect()->route('society.society_members.index')->with('success', 'Member created successfully!');
+        foreach ($validated['flat_no'] as $flatNo) {
+            Flat::where('id', $flatNo)->update(['society_member_id' => $society_member->id]);
+        }
+        //
+        return redirect()->route('society.member.index')->with('success', 'Member created successfully!');
     }
 
-    public function edit(SocietyMember $societyMember)
+    public function edit(SocietyMember $member)
     {
+
         $societies = SocietyUser::all();
         $buildings = Building::all();
-        return view('society.society_members.edit', compact('societyMember', 'societies', 'buildings'));
+
+        $flats = Flat::with('building', 'flatType')->when($member->id, function ($query) use ($member) {
+            return $query->where('society_member_id', $member->id);
+        })
+        ->where('society_id', $this->societyUserId)
+        ->orWhereNull('society_member_id')
+        ->orderBy('flat_no', 'ASC')
+        ->get(); 
+        $flatSelected = Flat::where('society_member_id', $member->id)->select('id')->get()->toArray();
+        $member['society_member_id'] = array_map(function ($item) {
+            return $item['id'];
+        }, $flatSelected);
+        return view('society.society_members.edit', compact('member', 'societies', 'buildings','flats'));
     }
 
-    public function update(Request $request, SocietyMember $societyMember)
-    {
-        $validated = $request->validate([
-            'society_id' => 'required|exists:societies,id',
-            'building_id' => 'required|exists:buildings,id',
+    public function update(Request $request, SocietyMember $member)
+    { 
+        $validated = $request->validate([ 
             'name' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'permanent_address' => 'required|string|max:255',
             'pan' => 'nullable|string|max:10',
             'uid' => 'nullable|string|max:12',
-            'email' => 'required|email|unique:society_members,email,' . $societyMember->id,
+            'email' => 'required|email|unique:society_members,email,' . $member->id,
+            //'password' => 'required|min:8',
             'mobile' => 'required|digits:10',
-            'gender' => 'nullable|in:Male,Female,Other',
-            'flat_no' => 'required|string',
-            'flat_type' => 'required|in:1 BHK,2 BHK,3 BHK,1 RK',
+            'gender' => 'nullable|in:Male,Female',
+            'flat_no' => 'required|array', 
         ]);
+ 
 
-        $societyMember->update($validated);
-
-        return redirect()->route('society.society_members.index')->with('success', 'Member updated successfully!');
+        $member->update($validated);
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Flat::where('society_member_id', $member->id)->update(['society_member_id' =>null]);
+        foreach ($validated['flat_no'] as $flatNo) {
+            //DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            Flat::where('id', $flatNo)->update(['society_member_id' => $member->id]);
+            //
+        }
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        return redirect()->route('society.member.index')->with('success', 'Member updated successfully!');
     }
 
     public function destroy(SocietyMember $societyMember)
     {
         $societyMember->delete();
 
-        return redirect()->route('society.society_members.index')->with('success', 'Member deleted successfully!');
+        return redirect()->route('society.member.index')->with('success', 'Member deleted successfully!');
     }
 }

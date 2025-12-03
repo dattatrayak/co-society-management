@@ -5,7 +5,7 @@
              @method($method)
          @endif
          <div class="row">
-             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
+             {{-- <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                  <div class="form-group">
                      <label for="society_id">Society</label>
                      <select name="society_id" id="society_id" class="form-control" required>
@@ -31,15 +31,8 @@
                          @endforeach
                      </select>
                  </div>
-             </div>
-             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 ">
-                 <div class="form-group">
-                     <label for="flat_no">Flat No</label>
-                     <select class="select2-multiple form-control" name="flat_no[]" multiple="multiple" id="flat_no">
-                         <option value="">---select Flat No---</option>
-                     </select>
-                 </div>
-             </div>
+             </div> --}}
+          
              <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                  <div class="form-group">
                      <label for="name">Name</label>
@@ -47,20 +40,13 @@
                          value="{{ $member->name ?? old('name') }}" required>
                  </div>
              </div>
-             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
+              <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                  <div class="form-group">
                      <label for="date_of_birth">Date of Birth</label>
                      <input type="date" name="date_of_birth" id="date_of_birth" class="form-control"
                          value="{{ $member->date_of_birth ?? old('date_of_birth') }}" >
                  </div>
              </div>
-             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 ">
-                 <div class="form-group">
-                     <label for="permanent_address">Permanent Address</label>
-                     <textarea name="permanent_address" id="permanent_address" class="form-control" required>{{ $member->permanent_address ?? old('permanent_address') }}</textarea>
-                 </div>
-             </div>
-
              <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                  <div class="form-group">
                      <label for="email">Email</label>
@@ -75,6 +61,28 @@
                          value="{{ $member->mobile ?? old('mobile') }}" required>
                  </div>
              </div>
+                <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 ">
+                 <div class="form-group">
+                     <label for="flat_no">Flat No</label> 
+                     <select class="select2-multiple form-control" name="flat_no[]" multiple="multiple" id="flat_no">
+                         <option value="">---select Flat No---</option>
+                           @foreach ($flats as $flat)
+                             <option value="{{ $flat->id }}" {{ (in_array($flat->id, $member->society_member_id) ) ? 'selected' : ''}}>
+                                 {{ $flat->flat_no }}  ({{ $flat->flatType->name }})({{ $flat->building->name }})
+                             </option>
+                         @endforeach
+                     </select>
+                 </div>
+             </div>
+            
+             <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 ">
+                 <div class="form-group">
+                     <label for="permanent_address">Permanent Address</label>
+                     <textarea name="permanent_address" id="permanent_address" class="form-control" required>{{ $member->permanent_address ?? old('permanent_address') }}</textarea>
+                 </div>
+             </div>
+
+             
               <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-3 ">
                  <div class="form-group">
                      <label for="uid">UID</label>

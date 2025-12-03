@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\SocietyFlatType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 class SocietyFlatTypeController extends Controller
 {
-   /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -73,8 +74,8 @@ class SocietyFlatTypeController extends Controller
      */
     public function destroy(SocietyFlatType $societyFlatType)
     {
-       // $userType->delete();
+        // $userType->delete();
 
-       // return redirect()->route('society_flat_types.index')->with('success', 'User type deleted successfully.');
+        // return redirect()->route('society_flat_types.index')->with('success', 'User type deleted successfully.');
     }
 }

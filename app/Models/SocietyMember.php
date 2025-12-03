@@ -40,6 +40,7 @@ class SocietyMember extends Model
     }
     public function flats()
     {
-        return $this->belongsTo(Flat::class);
+        return $this->hasMany(Flat::class,'society_member_id');
     }
+   
 }

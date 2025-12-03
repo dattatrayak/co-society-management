@@ -13,8 +13,8 @@ class DashbaordSocietyController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function dashboard(){
+    public function dashboard()
+    {
         return view('society.dashboard.index');
     }
-
 }

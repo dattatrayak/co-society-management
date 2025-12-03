@@ -17,6 +17,7 @@ class Flat extends Model
         'floor_number',
         'maintance_per_month',
         'desc',
+        'society_member_id'
     ];
     // Relationship with Building
     public function building()
@@ -33,14 +34,8 @@ class Flat extends Model
     {
         return $this->belongsTo(SocietyUser::class, 'society_id');
     }
-
-    // public function building()
-    // {
-    //     return $this->belongsTo(Building::class,'building_id');
-    // }
-
-    // public function flatType()
-    // {
-    //     return $this->belongsTo(SocietyFlatType::class, 'society_flat_types_id');
-    // }
+    public function societyMember()
+    {
+        return $this->belongsTo(SocietyMember::class, 'society_member_id');
+    }
 }

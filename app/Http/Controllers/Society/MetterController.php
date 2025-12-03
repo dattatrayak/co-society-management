@@ -18,19 +18,19 @@ class MetterController extends Controller
 
     public function __construct(MeterRepository $meterRepository, BuildingRepository $buildingRepository)
     {
-       $societyUser = Auth::guard('society_user')->user();
-       $this->userId = $societyUser->id;
-       $this->meterRepository = $meterRepository;
-       $this->buildingRepository = $buildingRepository;
+        $societyUser = Auth::guard('society_user')->user();
+        $this->userId = $societyUser->id;
+        $this->meterRepository = $meterRepository;
+        $this->buildingRepository = $buildingRepository;
     }
-  /**
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
-        $meters = ElectricityMeter::with('building')->paginate(10);
-        return view('society.meter.index', compact('meters'));
+        $buildings = Building::where('society_id', $this->userId)->select('name', 'id')->get();
+        $meters = ElectricityMeter::with('society')->with('building')->paginate(10);
+        return view('society.meter.index', compact('meters', 'buildings'));
     }
 
     /**
@@ -38,7 +38,7 @@ class MetterController extends Controller
      */
     public function create()
     {
-        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId); 
+        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
         return view('society.meter.create', compact('buildings'));
     }
 
@@ -51,7 +51,7 @@ class MetterController extends Controller
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
             'electricity_meter' => 'required|unique:electricity_meters,electricity_meter'
-        ]); 
+        ]);
         $insertData = $request->all();
         $insertData['society_id'] = $this->userId;
         ElectricityMeter::create($request->all());
@@ -70,9 +70,9 @@ class MetterController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(ElectricityMeter $meter)
-    { 
-        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId); 
-        return view('society.meter.edit', compact('meter','buildings'));
+    {
+        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
+        return view('society.meter.edit', compact('meter', 'buildings'));
     }
 
     /**
@@ -80,10 +80,10 @@ class MetterController extends Controller
      */
     public function update(Request $request, ElectricityMeter $meter)
     {
-        
+
         $request->validate([
             'building_id' => 'required|exists:buildings,id',
-            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter,' . $meter->id 
+            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter,' . $meter->id
         ]);
         $insert = $request->all();
         $insertData['society_id'] = $this->userId;
@@ -95,10 +95,9 @@ class MetterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ElectricityMeter $electricityMeter)
+    public function destroy(ElectricityMeter $meter)
     {
-       // $userType->delete();
-
-       // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
+        $meter->delete();
+        return redirect()->route('society.meter.index')->with('success', 'Electricity Meter deleted successfully.');
     }
 }

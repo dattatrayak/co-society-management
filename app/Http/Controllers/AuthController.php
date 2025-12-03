@@ -11,11 +11,11 @@ use App\Models\SocietyUser;
 
 class AuthController extends Controller
 {
-     // Show login form
-     public function login()
-     {
-         return view('society-auth.login');
-     }
+    // Show login form
+    public function login()
+    {
+        return view('society-auth.login');
+    }
     public function authenticate(Request $request)
     {
         $request->validate([
@@ -46,7 +46,7 @@ class AuthController extends Controller
                 ]);
 
                 // Send email notification
-               // $this->sendBlockedEmail($user);
+                // $this->sendBlockedEmail($user);
 
                 return back()->withErrors(['email' => 'Too many failed attempts. User is blocked for 30 minutes.']);
             }
@@ -61,7 +61,7 @@ class AuthController extends Controller
         Auth::guard('society_user')->login($user);
 
         $request->session()->regenerate();
-      return redirect( 'society/dashboard');
+        return redirect('society/dashboard');
     }
 
     // Admin dashboard
@@ -79,8 +79,8 @@ class AuthController extends Controller
 
         Mail::send([], [], function ($message) use ($user, $details) {
             $message->to($user->email)
-                    ->subject($details['subject'])
-                    ->setBody($details['body']);
+                ->subject($details['subject'])
+                ->setBody($details['body']);
         });
     }
 

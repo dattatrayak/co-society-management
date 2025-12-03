@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class FlatRepository
 {
     public function insertOrUpdateFlat($dataFlat, $nextData)
-    { 
+    {
         $societyUserId = Auth::guard('society_user')->user()->id;
 
         $toatalFlat = $dataFlat->flat_count;
@@ -18,7 +18,7 @@ class FlatRepository
         $flat_no_start = $dataFlat->flat_no_start;
         $flat_per_floor = $dataFlat->flat_per_floor;
         $society_flat_types_id = (isset($nextData['society_flat_types_id'])) ? $nextData['society_flat_types_id'] : null;
-        $maintance_per_month  = (isset($nextData['maintance_per_month'])) ? $nextData['maintance_per_month'] : null; 
+        $maintance_per_month  = (isset($nextData['maintance_per_month'])) ? $nextData['maintance_per_month'] : null;
         $flatEntry = [];
         for ($i = 0; $i < $floor; $i++) {
 

@@ -74,8 +74,8 @@ class UserTypeController extends Controller
      */
     public function destroy(UserType $userType)
     {
-       // $userType->delete();
+        // $userType->delete();
 
-       // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
+        // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
     }
 }

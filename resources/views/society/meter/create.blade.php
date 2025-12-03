@@ -5,7 +5,7 @@
         @include('society.layout.site_header')
 
         <div class="row">
-            <div class="col-xl-12"> 
+            <div class="col-xl-12">
 
                 <form action="{{ route('society.meter.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -35,11 +35,10 @@
                                 <button type="submit" class="btn btn-primary mt-3">Add</button>
                             </div>
                         </div>
-                    </div> 
-                    
+                    </div>
+
                 </form>
             </div>
         </div>
     </div>
 @endsection
- 

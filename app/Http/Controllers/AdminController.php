@@ -48,7 +48,7 @@ class AdminController extends Controller
                 ]);
 
                 // Send email notification
-               // $this->sendBlockedEmail($user);
+                // $this->sendBlockedEmail($user);
 
                 return back()->withErrors(['email' => 'Too many failed attempts. User is blocked for 30 minutes.']);
             }
@@ -62,7 +62,7 @@ class AdminController extends Controller
         // Authenticate and redirect
         Auth::login($user);
         $request->session()->regenerate();
-      return redirect( 'admin/dashboard');
+        return redirect('admin/dashboard');
     }
 
     // Admin dashboard
@@ -80,8 +80,8 @@ class AdminController extends Controller
 
         Mail::send([], [], function ($message) use ($user, $details) {
             $message->to($user->email)
-                    ->subject($details['subject'])
-                    ->setBody($details['body']);
+                ->subject($details['subject'])
+                ->setBody($details['body']);
         });
     }
 

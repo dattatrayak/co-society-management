@@ -51,11 +51,14 @@ class BuildingController extends Controller
 
         $request->validate([
             // 'name' => 'required|string|max:255',
-            'name'  => [ 'required', 'string', 'max:255',
-                            Rule::unique('buildings')->where(function ($query) use($request) {
-                                $query->where('name', $request->name)->where('society_id', $this->societyUserId);
-                            }),
-                        ],
+            'name'  => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('buildings')->where(function ($query) use ($request) {
+                    $query->where('name', $request->name)->where('society_id', $this->societyUserId);
+                }),
+            ],
             'flat_count' => 'required|integer|between:1,200',
             'floor' => 'required|integer|between:1,30',
             'flat_no_start' => 'required|integer',
@@ -88,11 +91,11 @@ class BuildingController extends Controller
         $user = Auth::guard('society_user')->user();
         $updatedRequest['society_id'] = $user->id;
         unset($updatedRequest['society_flat_types_id']);
-        unset($updatedRequest['maintance_per_month']); 
+        unset($updatedRequest['maintance_per_month']);
         $building = Building::create($updatedRequest);
 
         //insert all flats of society
-        $this->flatRepository->insertOrUpdateFlat( $building, $request->all());
+        $this->flatRepository->insertOrUpdateFlat($building, $request->all());
 
         return redirect()->route('society.building.index')->with('success', 'Society created successfully.');
     }
@@ -110,7 +113,7 @@ class BuildingController extends Controller
     public function edit(Building $building)
     {
 
-       // Flat::upsert($flatEntry, ['society_id', 'building_id', 'flat_no'] );
+        // Flat::upsert($flatEntry, ['society_id', 'building_id', 'flat_no'] );
 
         $societyFlatType = SocietyFlatType::pluck('name', 'id');
         return view('society.building.edit', compact('building', 'societyFlatType'));
@@ -165,8 +168,8 @@ class BuildingController extends Controller
         $updatedRequest['society_id'] = $user->id;
         unset($updatedRequest['society_flat_types_id']);
         $building->update($updatedRequest);
-            //insert all flats of society
-            $this->flatRepository->insertOrUpdateFlat( $building, $request->all());
+        //insert all flats of society
+        $this->flatRepository->insertOrUpdateFlat($building, $request->all());
         return redirect()->route('society.building.index')->with('success', 'User type updated successfully.');
     }
 
