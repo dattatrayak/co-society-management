@@ -9,8 +9,10 @@
     <meta name="author" content="" />
     <title>Society Management</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="{{ asset('theme/css/styles.css') }}" rel="stylesheet" />
-    {{-- <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script> --}}
+
+ 
 </head>
 
 <body class="sb-nav-fixed">
@@ -29,8 +31,7 @@
             @include('society.layout.footer')
         </div>
     </div>
-
-    <!-- jQuery (required for the Icon Picker) -->
+ 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
@@ -42,14 +43,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js">
     </script>
-
-<!-- FontAwesome CSS -->
+ 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-<!-- FontAwesome Icon Picker CSS -->
+ 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.min.css">
-
-<!-- FontAwesome Icon Picker JS -->
+ 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js"></script>
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
@@ -73,7 +71,6 @@
 
         // Attach the picker to the button
         $('#iconPickerButton').on('click', function () {
-            alert('dsfasdfas ');
             $('#icon').iconpicker('toggle'); // Open or close the picker
         });
         });

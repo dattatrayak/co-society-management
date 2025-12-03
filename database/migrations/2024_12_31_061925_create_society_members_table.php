@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('society_members', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('society_id');
-            $table->unsignedBigInteger('building_id');
             $table->string('name');
             $table->date('date_of_birth')->nullable();
             $table->string('permanent_address');
@@ -24,13 +23,13 @@ return new class extends Migration
             $table->string('password');
             $table->string('mobile');
             $table->string('gender')->nullable();
-            $table->unsignedBigInteger('flat_id');
+            //$table->unsignedBigInteger('flat_id');
             $table->timestamps();
 
             // Foreign keys
             $table->foreign('society_id')->references('id')->on('society_users')->onDelete('cascade');
-            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
-            $table->foreign('flat_id')->references('id')->on('flats')->onDelete('cascade'); 
+           // $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
+           // $table->foreign('flat_id')->references('id')->on('flats')->onDelete('cascade'); 
 
         });
     }

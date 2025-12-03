@@ -26,11 +26,11 @@ class MetterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
+        $buildings = Building::where('society_id', $this->userId)->select('name', 'id')->get();
         $meters = ElectricityMeter::with('society')->with('building')->paginate(10);
-        return view('society.meter.index', compact('meters'));
+        return view('society.meter.index', compact('meters', 'buildings'));
     }
 
     /**
@@ -95,10 +95,9 @@ class MetterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ElectricityMeter $electricityMeter)
+    public function destroy(ElectricityMeter $meter)
     {
-        // $userType->delete();
-
-        // return redirect()->route('user-types.index')->with('success', 'User type deleted successfully.');
+        $meter->delete();
+        return redirect()->route('society.meter.index')->with('success', 'Electricity Meter deleted successfully.');
     }
 }

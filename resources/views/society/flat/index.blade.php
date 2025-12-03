@@ -6,16 +6,16 @@
 
 
         <div class="row">
+            <div class="col-xl-12 mb-2">
+                <a href="{{ route('society.flat.create') }}" class="btn btn-primary">Create new Flat</a>
+            </div>
             <div class="col-xl-12">
                 <form method="GET" action="{{ route('society.flat.index') }}" class="mb-3">
                     <div class="row">
-                        <!-- Search -->
                         <div class="col-md-4">
                             <input type="text" name="search" class="form-control"
                                 placeholder="Search Flat No or Description" value="{{ request('search') }}">
                         </div>
-
-                        <!-- Building Filter -->
                         <div class="col-md-3">
                             <select name="building_id" class="form-control">
                                 <option value="">Select Building</option>
@@ -43,12 +43,7 @@
                         </div>
                     </div>
                 </form>
-                <a href="{{ route('society.flat.create') }}" class="btn btn-primary float-end">Create new Flat</a>
 
-                <form method="GET" action="{{ route('society.flat.index') }}">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Flat No">
-                    <button type="submit">Search</button>
-                </form>
                 <table class="table">
                     <thead>
                         <tr>

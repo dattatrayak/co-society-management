@@ -10,14 +10,16 @@ class SocietyMemberForm extends Component
     public $societies;
     public $buildings; 
     public $member;
+    public $flats;
 
-    public function __construct($action, $method = 'POST', $societies, $buildings, $member = null)
+    public function __construct($action, $method = 'POST', $societies, $buildings, $flats, $member = null)
     {
         $this->action = $action;
         $this->method = $method;
         $this->societies = $societies;
         $this->buildings = $buildings; 
         $this->member = $member;
+        $this->flats = $flats;
     }
 
     public function render()

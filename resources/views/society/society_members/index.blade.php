@@ -11,10 +11,9 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Society</th>
-                            <th>Building</th>
-                            <th>Flat No</th>
+                            <th>Email</th>
                             <th>Flat Type</th>
+                            <th>Flat No</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -22,13 +21,16 @@
                         @foreach ($members as $member)
                             <tr>
                                 <td>{{ $member->name }}</td>
-                                <td>{{ $member->society->name }}</td>
-                                <td>{{ $member->building->name }}</td>
-                                <td>{{ $member->flat_no }}</td>
+                                <td>
+                                    <ul class="list-group">
+                                        @foreach ($member->flats as $flat)
+                                            <li>{{ $flat->flat_no }} ({{ $flat->flatType->name }}) ({{ $flat->building->name }})</li>
+                                        @endforeach
+                                    </ul>
+                                </td>
                                 <td>{{ $member->flat_type }}</td>
                                 <td>
-                                    <a href="{{ route('society.member.edit', $member->id) }}"
-                                        class="btn btn-warning">Edit</a>
+                                    <a href="{{ route('society.member.edit', $member->id) }}" class="btn btn-warning">Edit</a>
                                     <form action="{{ route('society.member.destroy', $member->id) }}" method="POST"
                                         style="display:inline;">
                                         @csrf
@@ -41,7 +43,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                 {{ $members->links() }}
+                {{ $members->links() }}
             </div>
         </div>
     </div>
