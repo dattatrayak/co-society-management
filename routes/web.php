@@ -47,6 +47,12 @@ Route::prefix('admin')
         Route::resource('society-user-types', SocietyUserTypeController::class);
         Route::post('user-types-permissions/get-permissions', [UserTypePermissionController::class, 'getPermissions'])->name('permissions.get');
         Route::resource('society-user', SocietyUserController::class);
+        
+        Route::prefix('society-user')->name('society-user.')->controller(SocietyUserController::class)->group(function () {
+            Route::get('{society}/buildings',  'buildingsForm')->name('buildings.form');
+            Route::post('{society}/buildings', 'buildingsStore')->name('buildings.store'); 
+        });
+ 
         Route::resource('society-flat-type', SocietyFlatTypeController::class);
         Route::resource('society-menus', SocietyMenuController::class);
 

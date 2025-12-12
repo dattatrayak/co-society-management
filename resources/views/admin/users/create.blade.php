@@ -36,7 +36,7 @@
                         <label for="user_type_id">User Type</label>
                         <select name="user_type_id" id="user_type_id" class="form-control" required>
                             <option value="">Select User Type</option>
-                            @foreach ($societyUserTypes as $type)
+                            @foreach ($userTypes as $type)
                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
                             @endforeach
                         </select>

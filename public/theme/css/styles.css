@@ -11282,7 +11282,9 @@ body {
     padding-left: 10px;
     border-left: 2px solid #ddd;
 }
-
+#layoutSidenav_content main{
+  padding-bottom:20px;
+}
 .no-children {
     font-style: italic;
     color: #777;
@@ -11305,16 +11307,24 @@ body {
     font-size: 24px;
     line-height: 30PX;
 }
-
+.layout-border{
+      margin: 1px 0 0 0
+}
+div#buildings-container label {
+    font-size: 12px;
+}
+.pt-30 {
+  padding-top: 30px !important;
+}
 .border-upload {
-    padding: 20px 10px 0px;
+    padding: 10px 0px 0px;
     border: 2px dashed #055160;
     margin: 3px;
 }
 
 .upload_dropZone {
     border: 2px dashed #ccc;
-    padding: 20px;
+    padding: 2px;
     text-align: center;
     margin-bottom: 20px;
     cursor: pointer;

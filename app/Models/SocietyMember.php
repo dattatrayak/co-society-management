@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SocietyMember extends Model
 {
     use HasFactory;
-
+    use SoftDeletes;
     protected $fillable = [
         'society_id',
-        'building_id',
         'name',
         'date_of_birth',
         'permanent_address',
@@ -22,6 +22,8 @@ class SocietyMember extends Model
         'mobile',
         'gender',
         'flat_id',
+        'created_by',
+        'updated_BY',
     ];
 
     // Relationships
@@ -29,18 +31,12 @@ class SocietyMember extends Model
     {
         return $this->belongsTo(SocietyUser::class);
     }
-
-    public function building()
-    {
-        return $this->belongsTo(Building::class);
-    }
     public function flatType()
     {
         return $this->belongsTo(SocietyFlatType::class);
     }
     public function flats()
     {
-        return $this->hasMany(Flat::class,'society_member_id');
+        return $this->belongsToMany(Flat::class, 'member_flat', 'member_id', 'flat_id');
     }
-   
 }

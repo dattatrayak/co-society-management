@@ -21,16 +21,14 @@
 @endsection
 @section('addJs') 
  
-<link href="{{ str_replace('/public', '', asset('node_modules/select2/dist/css/select2.min.css')) }}" rel="stylesheet">
-
-<script src="{{  str_replace('/public', '',asset('node_modules/select2/dist/js/select2.min.js')) }}" ></script>
-    
-@endsection
+<link rel="stylesheet" href="{{  asset('theme/css/select2.min.css') }}" rel="stylesheet"> 
+<script src="{{ asset('theme/js/select2.min.js') }}" ></script>     
+@endsection 
 @section('scriptDockReady')  
  $('.select2-multiple').select2({
                 placeholder: "Select",
                 allowClear: true
             });
-            $('#flat_no').select2('destroy').select2();
+         $('#flat_no').select2('destroy').select2();
       
 @endsection

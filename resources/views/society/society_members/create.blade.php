@@ -17,13 +17,13 @@
         </div>
     </div>
 @endsection
-@section('addJs') 
- 
-<link href="{{ str_replace('/public', '', asset('node_modules/select2/dist/css/select2.min.css')) }}" rel="stylesheet">
 
-<script src="{{  str_replace('/public', '',asset('node_modules/select2/dist/js/select2.min.js')) }}" ></script>
+@section('addJs') 
+<link rel="stylesheet" href="{{  asset('theme/css/select2.min.css') }}" rel="stylesheet"> 
+<script src="{{ asset('theme/js/select2.min.js') }}" ></script> 
     
 @endsection
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 @section('scriptDockReady')  
  $('.select2-multiple').select2({
                 placeholder: "Select",

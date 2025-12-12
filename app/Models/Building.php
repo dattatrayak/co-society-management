@@ -27,10 +27,10 @@ class Building extends Model
         {
             return $this->hasMany(Flat::class, 'building_id');
         }
-        public function societyMember()
-        {
-            return $this->hasMany(SocietyMember::class, 'building_id');
-        }
+        // public function societyMember()
+        // {
+        //     return $this->hasMany(SocietyMember::class, 'building_id');
+        // }
         // public function society()
         // {
         //     return $this->belongsTo(SocietyUser::class, 'society_id');

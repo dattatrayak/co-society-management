@@ -23,7 +23,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('mobile');
             $table->string('gender')->nullable();
-            //$table->unsignedBigInteger('flat_id');
+            $table->string('created_by');
+            $table->string('updated_by')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             // Foreign keys

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\FlatRepository;
+use App\Models\Building;
+use App\Models\SocietyFlatType;
 use App\Models\SocietyUser;
 use App\Models\SocietyUserType;
 use Illuminate\Support\Facades\File;
@@ -12,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 
 class SocietyUserController extends Controller
 {
+    protected $flatRepository;
+    public function __construct(FlatRepository $flatRepository)
+    {
+        $this->flatRepository = $flatRepository;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -55,6 +63,7 @@ class SocietyUserController extends Controller
             'file2' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
         ]);
         $updatedRequest = $request->all();
+        //dd($updatedRequest);
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $fileName = time() . '-' . $file->getClientOriginalName();
@@ -135,6 +144,106 @@ class SocietyUserController extends Controller
         return redirect()->route('admin.society-user.index')->with('success', 'User type updated successfully.');
     }
 
+    public function buildingsForm(SocietyUser $society)
+    {
+        $societyFlatType = SocietyFlatType::pluck('name', 'id');
+        $society->load('buildings');
+        return view('admin.society_user.buildings', compact('society', 'societyFlatType'));
+    }
+
+    public function buildingsStore(Request $request, SocietyUser $society)
+    {
+         try {
+
+        //dump($society);
+        $data = $this->validateBuildings($request);
+        if ($data) {
+            $requestData = $request->all();
+            // dd(  $society );
+            if (isset($requestData['building_name'])) {
+                $index = 0;
+                foreach ($requestData['building_name'] as $value) {
+                    $insertBuilding = [];
+                    $insertBuilding['society_id'] = $society->id;
+                    $insertBuilding['name'] = $requestData['building_name'][$index];
+                    //$insertBuilding['flat_index'] = $requestData['flat_index'][$index];
+                    $insertBuilding['floor'] = $requestData['floor'][$index];
+                    $insertBuilding['flat_no_start'] = $requestData['flat_no_start'][$index];
+                    $insertBuilding['flat_per_floor'] = $requestData['flat_per_floor'][$index];
+                    $insertBuilding['cctv'] = $requestData['cctv'][$index];
+                    $insertBuilding['lift'] = $requestData['lift'][$index];
+                    $insertBuilding['lift'] = $requestData['lift'][$index];
+                    $insertBuilding['water_tank'] = $requestData['water_tank'][$index];
+                    $exists = Building::where('society_id', $insertBuilding['society_id'])
+                            ->where('name', $insertBuilding['name'])
+                            ->exists();
+
+                        if ($exists) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Building name already exists for this society. Please select another building name.'
+                            ]);
+                        }
+                    $building = Building::create($insertBuilding);
+                    //insert all flats of society
+                    $flatData = [];
+                    $flatData['maintance_per_month'] = $requestData['maintance_per_month'][$index];
+                    $flatData['society_flat_types_id'] = $requestData['society_flat_types_id'][$index];
+                    $this->flatRepository->insertOrUpdateFlat($building, $flatData);
+                    $index++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' =>  true,
+            'message' => 'Buildings saved successfully.',
+        ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function buildingsUpdate(Request $request, SocietyUser $societyUser)
+    {
+        // $data = $this->validateBuildings($request);
+        // dd($request->getAll());
+        // // DB::transaction(function () use ($society, $data) {
+        // //     // Replace semantics: clear and recreate
+        // //     $society->buildings()->delete();
+        // //     foreach ($this->zipBuildings($data) as $row) {
+        // //         $society->buildings()->create($row);
+        // //     }
+        // // });
+
+        // return redirect()->route('admin.society_user.create', $societyUser)
+        //     ->with('success', 'Buildings updated successfully.');
+    }
+
+    /** Validation + helpers (same as shared earlier) */
+    protected function validateBuildings(Request $request): array
+    {
+        return $request->validate([
+            'building_name'   => ['required', 'array', 'min:1', 'max:10'],
+            'building_name.*' => ['required', 'string', 'max:255'],
+            'floor'           => ['required', 'array'],
+            'floor.*'         => ['required', 'integer', 'min:1'],
+            'flat_no_start'   => ['required', 'array'],
+            'flat_no_start.*' => ['required', 'integer', 'min:0'],
+            'flat_per_floor'  => ['required', 'array'],
+            'flat_per_floor.*' => ['required', 'integer', 'min:1'],
+            'cctv'            => ['nullable', 'array'],
+            'cctv.*'          => ['nullable', 'integer', 'min:0'],
+            'lift'            => ['nullable', 'array'],
+            'lift.*'          => ['nullable', 'integer', 'min:0'],
+            'water_tank'      => ['nullable', 'array'],
+            'water_tank.*'    => ['nullable', 'integer', 'min:0'],
+        ]);
+    }
     /**
      * Remove the specified resource from storage.
      */

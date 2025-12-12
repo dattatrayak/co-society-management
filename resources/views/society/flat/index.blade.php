@@ -33,7 +33,7 @@
                                 @foreach ($societyFlatType as $flatType)
                                     <option value="{{ $flatType->id }}"
                                         {{ request('flat_type') == $flatType->id ? 'selected' : '' }}>
-                                        {{ $flatType->type }}
+                                        {{ $flatType->name }}
                                     </option>
                                 @endforeach
                             </select>

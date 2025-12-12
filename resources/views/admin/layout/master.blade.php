@@ -55,7 +55,7 @@
     </script>
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         @yield('script')
         $(document).ready(function() {
