@@ -18,8 +18,7 @@ class FlatRepository
         $flat_no_start = $dataFlat->flat_no_start;
         $flat_per_floor = $dataFlat->flat_per_floor;
         $society_flat_types_id = (isset($nextData['society_flat_types_id'])) ? $nextData['society_flat_types_id'] : 1;
-        $maintance_per_month  = (isset($nextData['maintance_per_month'])) ? $nextData['maintance_per_month'] : null;
-        $flatEntry = [];
+      
         for ($i = 0; $i < $floor; $i++) {
 
             if ($i > 0) {
@@ -38,11 +37,7 @@ class FlatRepository
                 if ($society_flat_types_id) {
                     $flatDataSingle['society_flat_types_id']  = $society_flat_types_id;
                 }
-                if ($maintance_per_month) {
-                    $flatDataSingle['maintance_per_month']  = $maintance_per_month;
-                }
-                // dump($flatDataSingle);
-                // die();
+ 
                 $flatEntry[] = $flatDataSingle;
                 $flat_no_start = $flat_no_start + 1;
             }

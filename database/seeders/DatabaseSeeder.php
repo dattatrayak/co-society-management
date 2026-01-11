@@ -139,7 +139,7 @@ class DatabaseSeeder extends Seeder
                 'order' => 6,
             ]
         );
-        
+
 
         SocietyUserType::create([
             'name' => 'Manager',
@@ -205,15 +205,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        SocietyMenu::create([
-            'name' => 'User Type Access',
-            'url' => 'society/society-user-types-permissions',
-            'icon' => 'fa-cogs',
-            'page_heading' => 'User Type Access Management',
-            'sub_heading' => null,
-            'parent_id' => $societyUserManagemnt->id,
-            'order' => 1,
-        ]
+        SocietyMenu::create(
+            [
+                'name' => 'User Type Access',
+                'url' => 'society/society-user-types-permissions',
+                'icon' => 'fa-cogs',
+                'page_heading' => 'User Type Access Management',
+                'sub_heading' => null,
+                'parent_id' => $societyUserManagemnt->id,
+                'order' => 1,
+            ]
         );
         $buildingMagement = SocietyMenu::create(
             [
@@ -226,7 +227,7 @@ class DatabaseSeeder extends Seeder
                 'order' => 2,
             ]
         );
-         SocietyMenu::create(
+        SocietyMenu::create(
             [
                 'name' => 'Flat Manage',
                 'url' => 'society/flat',
@@ -256,11 +257,64 @@ class DatabaseSeeder extends Seeder
                 'page_heading' => 'Society Member Managment',
                 'sub_heading' => null,
                 'parent_id' => null,
-                'order' =>3,
+                'order' => 3,
             ]
         );
-       
-        
+        $accounting = SocietyMenu::create(
+            [
+                'name' => 'Accounting Management',
+                'url' => 'society/account',
+                'icon' => 'fa-bookmark',
+                'page_heading' => 'Accounting Management',
+                'sub_heading' => null,
+                'parent_id' => null,
+                'order' => 4,
+            ]
+        );
+        SocietyMenu::create(
+            [
+                'name' => 'Maintenance Management',
+                'url' => 'society/maintenance',
+                'icon' => 'fa-life-buoy',
+                'page_heading' => 'Society Maintenance Managment',
+                'sub_heading' => null,
+                'parent_id' => $accounting->id,
+                'order' => 1,
+            ]
+        );
+        SocietyMenu::create(
+            [
+                'name' => 'Expencess Management',
+                'url' => 'society/expencess',
+                'icon' => 'fa-life-buoy',
+                'page_heading' => 'Society Expencess Managment',
+                'sub_heading' => null,
+                'parent_id' => $accounting->id,
+                'order' => 2,
+            ]
+        );
+        $setting = SocietyMenu::create(
+            [
+                'name' => 'Society Setting',
+                'url' => 'society/setting',
+                'icon' => 'fa-clock-o',
+                'page_heading' => 'Society Setting Managment',
+                'sub_heading' => null,
+                'parent_id' => null,
+                'order' => 5,
+            ]
+        );
+        SocietyMenu::create(
+            [
+                'name' => 'Expencess type',
+                'url' => 'society/expencesstype',
+                'icon' => 'fa-clock-o',
+                'page_heading' => 'Society expencess type Managment',
+                'sub_heading' => null,
+                'parent_id' => $setting->id,
+                'order' => 1,
+            ]
+        );
         SocietyFlatType::create([
             'name' => '1 RK',
             'description' => null,

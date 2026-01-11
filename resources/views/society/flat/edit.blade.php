@@ -50,13 +50,7 @@
                                 <input type="text" name="floor_number" id="floor_number" class="form-control"
                                     value="{{ old('floor_number', $flat->floor_number) }}" required>
                             </div>
-                             <div class="form-group">
-                                <label for="maintance_per_month">Maintance</label>
-                                <input type="text" name="maintance_per_month" id="maintance_per_month"
-                                    placeholder="99999.99"
-                                    value="{{ old('maintance_per_month', $flat->maintance_per_month) }}"
-                                    class="form-control" required>
-                            </div>
+                          
                             <div class="form-group">
                                 <label for="desc">Description</label>
                                 <textarea type="text" name="desc" id="desc" class="form-control">{{ old('desc', $flat->desc) }}</textarea>

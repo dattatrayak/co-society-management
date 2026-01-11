@@ -52,7 +52,6 @@
                             <th>Building Name</th>
                             <th>Flat Type</th>
                             <th>Floor No</th>
-                            <th>Maintenance</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -64,7 +63,7 @@
                                 <td>{{ $flat->building->name }}</td>
                                 <td>{{ $flat->flatType->name }}</td>
                                 <td>{{ $flat->floor_number }}</td>
-                                <td>{{ $flat->maintance_per_month }}</td>
+                                 
                                 <td>
                                     <a href="{{ route('society.flat.edit', $flat) }}" class="btn btn-warning">Edit</a>
                                     <form action="{{ route('society.flat.destroy', $flat) }}" method="POST"

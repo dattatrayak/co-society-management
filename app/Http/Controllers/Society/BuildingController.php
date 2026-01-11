@@ -66,7 +66,7 @@ class BuildingController extends Controller
             'society_flat_types_id' => 'required|numeric',
             'cctv' => 'nullable|integer|between:1,30',
             'lift' => 'nullable|integer|between:1,10',
-            'maintance_per_month' => 'required|numeric|min:1|max:100000',
+         
             'water_tank' => 'nullable|integer|between:1,10',
             'building_img' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
             'floor_plan' => 'nullable|image|mimes:jpg,png,jpeg,svg|max:2048',
@@ -91,7 +91,7 @@ class BuildingController extends Controller
         $user = Auth::guard('society_user')->user();
         $updatedRequest['society_id'] = $user->id;
         unset($updatedRequest['society_flat_types_id']);
-        unset($updatedRequest['maintance_per_month']);
+      
         $building = Building::create($updatedRequest);
 
         //insert all flats of society

@@ -187,7 +187,7 @@ class SocietyUserController extends Controller
                     $building = Building::create($insertBuilding);
                     //insert all flats of society
                     $flatData = [];
-                    $flatData['maintance_per_month'] = $requestData['maintance_per_month'][$index];
+                   
                     $flatData['society_flat_types_id'] = $requestData['society_flat_types_id'][$index];
                     $this->flatRepository->insertOrUpdateFlat($building, $flatData);
                     $index++;

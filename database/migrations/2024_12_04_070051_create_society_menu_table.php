@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->nullable(); // Parent ID for submenus
             $table->integer('order')->default(0); // Menu item order
             $table->timestamps();
-            $table->foreign('parent_id')->references('id')->on('menus')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('society_menus')->onDelete('cascade');
 
         });
     }

@@ -76,13 +76,6 @@
              <label for="floatingSelect">Works with selects</label>
            </div>
          </div>
-         <div class="col-md-2">
-           <div class="form-floating mb-3">
-             <input type="number" name="maintance_per_month[]" id="maintance_per_month1" class="form-control"
-               value="{{ old('maintance_per_month') }}" placeholder="Water tank Count">
-             <label for="lift_count" title="Maintance per month">Maintance per month</label>
-           </div>
-         </div>
          <div class="col-md-2 mt-3 d-flex justify-content-start align-items-start pt-2">
            <button type="button" class="btn btn-primary me-2 add-building" id="add_building1" title="Add New">
              <i class="fa fa-plus-square"></i>
@@ -218,10 +211,6 @@
            base: 'society_flat_types_id',
            selector: 'input[name="society_flat_types_id[]"]'
          },
-         {
-           base: 'maintance_per_month',
-           selector: 'input[name="maintance_per_month[]"]'
-         },
        ];
 
        map.forEach(f => {
@@ -280,10 +269,6 @@
            {
              base: 'society_flat_types_id',
              selector: 'input[name="society_flat_types_id[]"]'
-           },
-           {
-             base: 'maintance_per_month',
-             selector: 'input[name="maintance_per_month[]"]'
            },
          ];
 
@@ -390,12 +375,12 @@
          type: "POST",
          data: $form.serialize(),
          success: function(resp) {
-        console.log(resp);
+           console.log(resp);
            if (resp && resp.success) {
              $("#buildingModal").modal('hide');
-              setTimeout(() => {
-                  location.reload();
-              }, 300); 
+             setTimeout(() => {
+               location.reload();
+             }, 300);
            } else {
              // handle validation errors from server if you return them
              alert(resp.message || 'Something went wrong.');

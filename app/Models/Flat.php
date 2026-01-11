@@ -15,7 +15,6 @@ class Flat extends Model
         'flat_no',
         'society_flat_types_id',
         'floor_number',
-        'maintance_per_month',
         'desc',
     ];
     // Relationship with Building

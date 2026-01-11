@@ -75,6 +75,7 @@ class SocietyMemberController extends Controller
     public function edit(SocietyMember $member)
     {
 
+       $members = SocietyMember::with('society','flats')->paginate(10);
         $societies = SocietyUser::all();
         $buildings = Building::all();
 $member->flats()->sync([2, 4, 6]);

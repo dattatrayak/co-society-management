@@ -71,14 +71,6 @@
                                             value="{{ old('water_tank') }}" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 pt-3">
-                                    <div class="form-group">
-                                        <label for="maintance_per_month">Maintance dddd</label>
-                                        <input type="text" name="maintance_per_month" id="maintance_per_month"
-                                           placeholder="99999.99" value="{{ old('maintance_per_month') }}"
-                                            class="form-control" required>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col-12 col-sm-8 col-md-8 col-lg-9 col-xl-9">
