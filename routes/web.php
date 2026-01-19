@@ -11,9 +11,11 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserTypeController;
 use App\Http\Controllers\Admin\UserTypePermissionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Society\AccountController;
 use App\Http\Controllers\Society\BuildingController;
 use App\Http\Controllers\Society\DashbaordSocietyController;
 use App\Http\Controllers\Society\FlatController;
+use App\Http\Controllers\Society\MaintenanceController;
 use App\Http\Controllers\Society\MetterController;
 use App\Http\Controllers\Society\SiteUserController;
 use App\Http\Controllers\Society\SocietyMemberController;
@@ -23,9 +25,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/login', [AuthController::class, 'login']);
-
-// Route::get('/dashboard', [UserController::class, 'dashboard']);
-// Route::get('/users', [UserController::class, 'users']);
+ 
 
 Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'authenticate'])->name('admin.authenticate');
@@ -37,8 +37,7 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [DashbaordController::class, 'dashboard'])->name('dashboard');
-        // Route::get('/users', [UserController::class, 'index'])->name('users');
-        // Route::post('/users', [UserController::class, 'store'])->name('users.store');
+ 
 
         Route::resource('menus', MenuController::class);
         Route::resource('user-types', UserTypeController::class);
@@ -47,16 +46,14 @@ Route::prefix('admin')
         Route::resource('society-user-types', SocietyUserTypeController::class);
         Route::post('user-types-permissions/get-permissions', [UserTypePermissionController::class, 'getPermissions'])->name('permissions.get');
         Route::resource('society-user', SocietyUserController::class);
-        
+
         Route::prefix('society-user')->name('society-user.')->controller(SocietyUserController::class)->group(function () {
             Route::get('{society}/buildings',  'buildingsForm')->name('buildings.form');
-            Route::post('{society}/buildings', 'buildingsStore')->name('buildings.store'); 
+            Route::post('{society}/buildings', 'buildingsStore')->name('buildings.store');
         });
- 
+
         Route::resource('society-flat-type', SocietyFlatTypeController::class);
         Route::resource('society-menus', SocietyMenuController::class);
-
-
     });
 
 Route::get('/society/login', [AuthController::class, 'login'])->name('society.login');
@@ -72,4 +69,6 @@ Route::prefix('society')
         Route::resource('meter', MetterController::class);
         Route::resource('member', SocietyMemberController::class);
         Route::get('flats-by-building/{building_id}', [FlatController::class, 'getFlatsByBuilding']);
+        Route::resource('account', AccountController::class);
+        Route::resource('maintenance', MaintenanceController::class);
     });

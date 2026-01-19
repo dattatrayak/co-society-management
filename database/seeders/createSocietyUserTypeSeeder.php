@@ -25,7 +25,7 @@ class createSocietyUserTypeSeeder extends Seeder
         ]);
         SocietyUserType::create([
             'name' => 'Security',
-            'description' => 'Account is a user to get access for all adding and general entries and manage the Money in the system',
+            'description' => 'Security Securiety Staff',
             'status' => 1,
         ]);
 

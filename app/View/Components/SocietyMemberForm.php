@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\View\Components;
 
 use Illuminate\View\Component;
@@ -8,18 +9,20 @@ class SocietyMemberForm extends Component
     public $action;
     public $method;
     public $societies;
-    public $buildings; 
+    public $buildings;
     public $member;
     public $flats;
+    public $selectedFlats;
 
-    public function __construct($action, $method = 'POST', $societies, $buildings, $flats, $member = null)
+    public function __construct($action, $method = 'POST', $societies, $buildings, $flats, $member = null, $selectedFlats = [])
     {
         $this->action = $action;
         $this->method = $method;
         $this->societies = $societies;
-        $this->buildings = $buildings; 
+        $this->buildings = $buildings;
         $this->member = $member;
         $this->flats = $flats;
+        $this->selectedFlats = $selectedFlats;
     }
 
     public function render()

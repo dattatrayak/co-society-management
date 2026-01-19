@@ -51,21 +51,21 @@ class FlatController extends Controller
         // Filter by search term (flat_no or description)
         if (!empty($search)) {
             $flats->where('flat_no', 'LIKE', "%{$search}%")
-                  ->orWhere('desc', 'LIKE', "%{$search}%");
-        } 
+                ->orWhere('desc', 'LIKE', "%{$search}%");
+        }
         if ($building_id) {
             $flats->where('building_id', $building_id);
         }
- 
+
         if ($flat_type) {
             $flats->where('society_flat_types_id', $flat_type);
         }
- 
+
         $flats = $flats->with(['building', 'flatType', 'society'])->paginate(10);
- 
+
         $flats->appends($request->only(['search', 'building_id', 'flat_type']));
 
-        return view('society.flat.index', compact('flats','buildings','societyFlatType'));
+        return view('society.flat.index', compact('flats', 'buildings', 'societyFlatType'));
     }
 
     /**
@@ -112,7 +112,7 @@ class FlatController extends Controller
     {
         $buildings = Building::where('society_id', $this->societyUserId)->select('name', 'id')->get();
         $societyFlatType = SocietyFlatType::select('name', 'id')->get();
-        return view('society.flat.edit', compact('flat', 'societyFlatType','buildings'));
+        return view('society.flat.edit', compact('flat', 'societyFlatType', 'buildings'));
     }
 
     /**
@@ -128,17 +128,17 @@ class FlatController extends Controller
             'desc' => 'nullable|string|max:500',
         ]);
 
-       // $flat = $request->all();
+        // $flat = $request->all();
         $flat->update($request->all());
 
         return redirect()->route('society.flat.index')->with('success', 'Flats updated successfully.');
     }
-    public function getFlatsByBuilding($building_id,)
+    public function getFlatsByBuilding($building_id)
     {
         $flats = Flat::where('society_id', $this->societyUserId)
-        ->where('building_id', $building_id)
-        ->with('flatType:id,name') // Load only 'id' and 'name' from flatType
-        ->get(['id', 'flat_no', 'society_flat_types_id']);
+            ->where('building_id', $building_id)
+            ->with('flatType:id,name') // Load only 'id' and 'name' from flatType
+            ->get(['id', 'flat_no', 'society_flat_types_id']);
         $flatsData = $flats->map(function ($flat) {
             return [
                 'id' => $flat->id,
@@ -146,7 +146,7 @@ class FlatController extends Controller
                 'flatType' => $flat->flatType->name, // Accessing the flatType's name
             ];
         });
-        
+
         return response()->json($flatsData);
     }
 

@@ -12,8 +12,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Flat Type</th>
-                            <th>Flat No</th>
+                            <th>Flat</th> 
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -21,6 +20,7 @@
                         @foreach ($members as $member)
                             <tr>
                                 <td>{{ $member->name }}</td>
+                                <td>{{ $member->email }}</td>
                                 <td>
                                     <ul class="list-group">
                                         @foreach ($member->flats as $flat)
@@ -28,7 +28,7 @@
                                         @endforeach
                                     </ul>
                                 </td>
-                                <td>{{ $member->flat_type }}</td>
+                               
                                 <td>
                                     <a href="{{ route('society.member.edit', $member->id) }}" class="btn btn-warning">Edit</a>
                                     <form action="{{ route('society.member.destroy', $member->id) }}" method="POST"

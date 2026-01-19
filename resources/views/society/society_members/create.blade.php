@@ -24,7 +24,7 @@
     
 @endsection
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-@section('scriptDockReady')  
+@section('scriptDockReady')
  $('.select2-multiple').select2({
                 placeholder: "Select",
                 allowClear: true
@@ -51,5 +51,5 @@
             } else {
                 $('#flat_no').append('<option value="">Select Flat</option>');
             }
-        });  
+        });
 @endsection

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('society_flat_types_id')->nullable();
             $table->integer(column: 'floor_number')->nullable();
             $table->text('desc')->nullable();
-
+            $table->timestamps();
             $table->foreign('society_id')->references('id')->on('society_users')->onDelete('cascade');
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->foreign('society_flat_types_id')->references('id')->on('society_flat_types')->onDelete('cascade');

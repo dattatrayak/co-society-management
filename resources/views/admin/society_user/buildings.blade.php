@@ -68,12 +68,12 @@
            <div class="form-floating mb-3">
              <select class="form-select" id="floatingSelect" name="society_flat_types_id[]" id="society_flat_types_id"
                class="form-control">
-               <option value="" disabled selected>Select Building Type</option>
+               <option value="" disabled selected>Select Flat Type</option>
                @foreach ($societyFlatType as $key => $value)
                <option value="{{ $key }}">{{ $value }}</option>
                @endforeach
              </select>
-             <label for="floatingSelect">Works with selects</label>
+             <label for="floatingSelect">Select flat type</label>
            </div>
          </div>
          <div class="col-md-2 mt-3 d-flex justify-content-start align-items-start pt-2">

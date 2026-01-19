@@ -39,7 +39,8 @@
                      <select class="select2-multiple form-control" name="flat_no[]" multiple="multiple" id="flat_no">
                          <option value="">---select Flat No---</option>
                          @foreach ($flats as $flat)
-                         <option value="{{ $flat->id }}">
+                         <option value="{{ $flat->id }}"
+                            {{ in_array((string)$flat->id, array_map('strval', $selectedFlats), true) ? 'selected' : '' }}>
                              {{ $flat->flat_no }} ({{ $flat->flatType->name }})({{ $flat->building->name }})
                          </option>
                          @endforeach

@@ -61,10 +61,9 @@ class SocietyMemberController extends Controller
             'mobile' => 'required|digits:10',
             'gender' => 'nullable|in:Male,Female',
             'flat_no' => 'required|array',
-        ]); 
+        ]);
         $lastFiveDigits =  $validated['mobile'];
         $validated['password'] = bcrypt($lastFiveDigits);
-        $validated['society_id'] = $this->societyUserId;
         $validated['society_id'] = $this->societyUserId;
         $validated['created_by'] = $this->societyUserId;
         $society_member = SocietyMember::create($validated);
@@ -75,20 +74,17 @@ class SocietyMemberController extends Controller
     public function edit(SocietyMember $member)
     {
 
-       $members = SocietyMember::with('society','flats')->paginate(10);
         $societies = SocietyUser::all();
         $buildings = Building::all();
-$member->flats()->sync([2, 4, 6]);
-         $flats = Flat::with('building', 'flatType')
+        $member->flats();
+        $flats = Flat::with('building', 'flatType')
             ->where('society_id', $this->societyUserId)
             // ->whereNull('society_member_id')
             ->orderBy('flat_no', 'asc')
             ->get();
-        // $flatSelected = Flat::where('society_member_id', $member->id)->select('id')->get()->toArray();
-        // $member['society_member_id'] = array_map(function ($item) {
-        //     return $item['id'];
-        // }, $flatSelected);
-        return view('society.society_members.edit', compact('member', 'societies', 'buildings', 'flats'));
+        $selectedFlats = $member->flats->pluck('id')->toArray();
+        
+        return view('society.society_members.edit', compact('member', 'societies', 'buildings', 'flats', 'selectedFlats'));
     }
 
     public function update(Request $request, SocietyMember $member)
@@ -105,9 +101,8 @@ $member->flats()->sync([2, 4, 6]);
             'gender' => 'nullable|in:Male,Female',
             'flat_no' => 'required|array',
         ]);
-
-
         $member->update($validated);
+        $member->flats()->sync($validated['flat_no']);
         // DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         // Flat::where('society_member_id', $member->id)->update(['society_member_id' =>null]);
         // foreach ($validated['flat_no'] as $flatNo) {
