@@ -13,19 +13,22 @@ use App\Http\Controllers\Admin\UserTypePermissionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Society\AccountController;
 use App\Http\Controllers\Society\BuildingController;
+use App\Http\Controllers\Society\CashCategoryController;
 use App\Http\Controllers\Society\DashbaordSocietyController;
 use App\Http\Controllers\Society\FlatController;
+use App\Http\Controllers\Society\FlatTypeMaintenanceController;
 use App\Http\Controllers\Society\MaintenanceController;
 use App\Http\Controllers\Society\MetterController;
 use App\Http\Controllers\Society\SiteUserController;
 use App\Http\Controllers\Society\SocietyMemberController;
+use App\Http\Controllers\Society\SocietySettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/login', [AuthController::class, 'login']);
- 
+
 
 Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'authenticate'])->name('admin.authenticate');
@@ -37,7 +40,7 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [DashbaordController::class, 'dashboard'])->name('dashboard');
- 
+
 
         Route::resource('menus', MenuController::class);
         Route::resource('user-types', UserTypeController::class);
@@ -71,4 +74,8 @@ Route::prefix('society')
         Route::get('flats-by-building/{building_id}', [FlatController::class, 'getFlatsByBuilding']);
         Route::resource('account', AccountController::class);
         Route::resource('maintenance', MaintenanceController::class);
+        Route::resource('setting', SocietySettingController::class);
+        Route::put('setting/{id}/maintainance', [SocietySettingController::class, 'storeOrUpdate'])
+            ->name('society.storeOrUpdate.save');
+        Route::resource('expencess-type', CashCategoryController::class);
     });

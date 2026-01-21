@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('society_settings', function (Blueprint $table) {
+        Schema::create('cash_categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('society_id')->nullable(); // if multi-society
-            $table->decimal('maintenance_late_fee', 8, 2)->default(0);
-            $table->enum('late_fee_type', ['fixed', 'percentage'])->default('fixed');
-            $table->integer('grace_days')->default(0);
+            $table->unsignedBigInteger('society_id')->nullable();
+            $table->string('name');
+            $table->enum('type', ['income', 'expense']);
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->timestamps();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('society_settings');
+        Schema::dropIfExists('cash_categories');
     }
 };

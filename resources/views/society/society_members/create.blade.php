@@ -6,13 +6,13 @@
 
         <div class="row">
             <div class="col-xl-12"> 
-  <x-society-member-form 
-        :action="route('society.member.store')"
-        method="POST" 
-        :societies="$societies" 
-        :buildings="$buildings"
-        :flats="$flats"
-    />
+                <x-society-member-form
+                        :action="route('society.member.store')"
+                        method="POST" 
+                        :societies="$societies" 
+                        :buildings="$buildings"
+                        :flats="$flats"
+                    />
             </div>
         </div>
     </div>
