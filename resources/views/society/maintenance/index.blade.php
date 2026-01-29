@@ -16,6 +16,17 @@
                         <input type="text" name="search" class="form-control"
                             placeholder="flat Number" value="{{ request('search') }}">
                     </div>
+                    <div class="col-md-3">
+                        <select name="flat_type" class="form-control">
+                            <option value="">Select Flat Type</option>
+                            @foreach ($societyFlatType as $flatType)
+                            <option value="{{ $flatType->id }}"
+                                {{ request('flat_type') == $flatType->id ? 'selected' : '' }}>
+                                {{ $flatType->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <!-- Building Filter -->
                     <div class="col-md-3">
@@ -52,7 +63,7 @@
                     <tr>
                         <td>{{ $record->flat->flat_no }}</td>
                         <td>{{ $record->building?->name }}</td>
-                 
+
                         <td>{{ date('F Y', mktime(0,0,0,$record->month,1,$record->year)) }}</td>
                         <td>₹ {{ number_format($record->amount, 2) }}</td>
                         <td>
@@ -62,12 +73,12 @@
                         </td>
                         <td>{{ ucfirst($record->payment_mode) }}</td>
                         <td>
-                            <a href="{{ route('society.maintenance.edit', $record) }}" class="btn btn-sm btn-info">
+                            <a href="{{ route('society.maintenance.create', $record) }}" class="btn btn-sm btn-info">
                                 Edit
                             </a>
 
                             @if($record->status === 'pending')
-                            <form action="{{ route('maintenance.paid', $record) }}"
+                            <form action="{{ route('society.maintenance.create', $record) }}"
                                 method="POST"
                                 style="display:inline;">
                                 @csrf
@@ -84,7 +95,7 @@
                     </tr>
                     @endforelse
                 </tbody>
-            </table> 
+            </table>
             <div class="d-flex justify-content-center">
                 {{ $records->links('vendor.pagination.bootstrap-5') }}
             </div>

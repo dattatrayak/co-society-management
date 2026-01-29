@@ -4,8 +4,10 @@
 namespace App\Http\Repository;
 
 use App\Models\Flat;
+use App\Models\SocietyFlatType;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class FlatRepository
 {
@@ -18,7 +20,7 @@ class FlatRepository
         $flat_no_start = $dataFlat->flat_no_start;
         $flat_per_floor = $dataFlat->flat_per_floor;
         $society_flat_types_id = (isset($nextData['society_flat_types_id'])) ? $nextData['society_flat_types_id'] : 1;
-      
+
         for ($i = 0; $i < $floor; $i++) {
 
             if ($i > 0) {
@@ -37,7 +39,7 @@ class FlatRepository
                 if ($society_flat_types_id) {
                     $flatDataSingle['society_flat_types_id']  = $society_flat_types_id;
                 }
- 
+
                 $flatEntry[] = $flatDataSingle;
                 $flat_no_start = $flat_no_start + 1;
             }
@@ -57,5 +59,16 @@ class FlatRepository
                 );
             }
         }
+    }
+    public function getFlatTypeDropdown()
+    {
+        // return Cache::rememberForever(
+        //     "society_flat_types",
+        //     now()->addHours(6),
+        //     function () {
+                return SocietyFlatType::select('id', 'name')
+                    ->get();
+        //     }
+        // );
     }
 }

@@ -23,4 +23,8 @@ class CashTransaction extends Model
     {
         return $this->belongsTo(CashCategory::class, 'cash_category_id');
     }
+    public function maintenanceRecords()
+    {
+        return $this->hasMany(MaintenanceRecord::class, 'cash_transactions_id');
+    }
 }

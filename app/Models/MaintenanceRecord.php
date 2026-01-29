@@ -15,6 +15,7 @@ class MaintenanceRecord extends Model
         'society_id',
         'building_id',
         'flat_id',
+        'cash_transactions_id',
         'year',
         'month',
         'amount',
@@ -68,5 +69,9 @@ class MaintenanceRecord extends Model
     public function getMonthNameAttribute(): string
     {
         return date('F', mktime(0, 0, 0, $this->month, 1));
+    }
+    public function cashTransaction()
+    {
+        return $this->belongsTo(CashTransaction::class, 'cash_transactions_id');
     }
 }

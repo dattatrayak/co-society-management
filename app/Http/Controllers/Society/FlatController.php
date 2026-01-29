@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\FlatRepository;
 use App\Models\building;
 use App\Models\Flat;
 use App\Models\SocietyFlatType;
@@ -16,9 +17,10 @@ class FlatController extends Controller
 
     protected $societyUserId;
     protected $flatRepository;
-    public function __construct()
+    public function __construct(FlatRepository $flatRepository)
     {
         $this->societyUserId = Auth::guard('society_user')->user()->id;
+        $this->flatRepository = $flatRepository;
     }
     /**
      * Display a listing of the resource.
@@ -26,7 +28,7 @@ class FlatController extends Controller
     public function index(Request $request)
     {
         $buildings = Building::where('society_id', $this->societyUserId)->select('name', 'id')->get();
-        $societyFlatType = SocietyFlatType::select('name', 'id')->get();
+        $societyFlatType = $this->flatRepository->getFlatTypeDropdown();
         $search = request('search');
         // $flats =  Flat::with('society', 'building', 'flatType')
         // ->when($search, function ($query, $search) {

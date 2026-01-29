@@ -11,7 +11,7 @@ class CashCategoryController extends Controller
 {
     private $userId = null;
 
-    public function __construct( )
+    public function __construct()
     {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
@@ -22,15 +22,12 @@ class CashCategoryController extends Controller
         $categories = CashCategory::latest()->paginate(10);
         return view('society.cash_categories.index', compact('categories'));
     }
- 
+
     public function create()
     {
         return view('society.cash_categories.create');
     }
 
-    /* =========================
-       STORE
-    ========================== */
     public function store(Request $request)
     {
         $request->validate([
@@ -52,18 +49,12 @@ class CashCategoryController extends Controller
             ->with('success', 'Cash category created successfully');
     }
 
-    /* =========================
-       EDIT VIEW
-    ========================== */
     public function edit($id)
     {
         $category = CashCategory::findOrFail($id);
         return view('society.cash_categories.create', compact('category'));
     }
 
-    /* =========================
-       UPDATE
-    ========================== */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -85,12 +76,9 @@ class CashCategoryController extends Controller
             ->with('success', 'Cash category updated successfully');
     }
 
-    /* =========================
-       DELETE
-    ========================== */
     public function destroy($id)
     {
-        CashCategory::findOrFail($id)->delete();
+        //CashCategory::findOrFail($id)->delete();
 
         return redirect()
             ->route('society.expencess-type.index')

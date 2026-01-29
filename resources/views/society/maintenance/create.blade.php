@@ -16,7 +16,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>Flat</label>
-                            <select name="flat_id" class="form-control" required>
+                            <select name="flat_id" id="flat_id" class="form-control" required>
                                 <option value="">Select Flat</option>
                                 @foreach($flats as $flat)
                                 <option value="{{ $flat->id }}">
@@ -29,15 +29,20 @@
 
                         <div class="col-md-3">
                             <label>Year</label>
-                            <input type="number" name="year"
-                                class="form-control"
-                                value="{{ date('Y') }}"
-                                required>
+                            <select name="year" id="year" class="form-control">
+                                <option value="">Select Year</option>
+                                @foreach(lastTenYears() as $year)
+                                <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="col-md-3">
                             <label>Month</label>
-                            <select name="month" class="form-control" required>
+                            <select name="month" id="month" class="form-control" required>
+                                <option value="" disabled>---Select Month--- </option>
                                 @foreach(range(1,12) as $m)
                                 <option value="{{ $m }}">
                                     {{ date('F', mktime(0,0,0,$m,1)) }}
@@ -48,34 +53,20 @@
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label>From Year</label>
-                                    <input type="number" name="from_year"
-                                        class="form-control"
-                                        value="{{ date('Y') }}"
-                                        required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label>From Month</label>
-                                    <select name="from_month" class="form-control" required>
-                                        @foreach(range(1,12) as $m)
-                                        <option value="{{ $m }}">
-                                            {{ date('F', mktime(0,0,0,$m,1)) }}
+                                    <label>To Year</label>
+                                    <select name="to_year" id="to_year" class="form-control">
+                                        <option value="">Select Year</option>
+                                        @foreach(lastTenYears() as $year)
+                                        <option value="{{ $year }}">
+                                            {{ $year }}
                                         </option>
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label>To Year</label>
-                                    <input type="number" name="to_year"
-                                        class="form-control"
-                                        value="{{ date('Y') }}"
-                                        required>
-                                </div>
                                 <div class="col-md-6">
                                     <label>To Month</label>
-                                    <select name="to_month" class="form-control" required>
+                                    <select name="to_month" id="to_month" class="form-control">
+                                        <option value="">---Select Month--- </option>
                                         @foreach(range(1,12) as $m)
                                         <option value="{{ $m }}">
                                             {{ date('F', mktime(0,0,0,$m,1)) }}
@@ -86,11 +77,16 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-md-12 mt-5">
+                            <div id="maintenanceTable">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row mt-3">
                         <div class="col-md-4">
                             <label>Amount</label>
-                            <input type="number" name="amount" class="form-control" required>
+                            <input type="number" name="amount" id="amount" class="form-control" required>
                         </div>
 
                         <div class="col-md-4">
@@ -127,7 +123,58 @@
                 </div>
 
             </form>
+
+
         </div>
     </div>
 </div>
+@endsection
+@section('scriptDockReady')
+$('#flat_id, #year, #month, #to_year, #to_month')
+.on('change', function () {
+calculateMaintenance();
+});
+@endsection
+@section('script')
+function calculateMaintenance() {
+$.ajax({
+url: "{{ route('society.maintenance.calculate') }}",
+type: "POST",
+data: {
+_token: "{{ csrf_token() }}",
+flat_type_id: $('#flat_id').val(),
+from_year: $('#year').val(),
+from_month: $('#month').val(),
+to_year: $('#to_year').val(),
+to_month: $('#to_month').val(),
+},
+success: function (res) {
+
+let html = `<table class="table table-striped">
+    <tr>
+        <th>#</th>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Late Fee</th>
+        <th>Total</th>
+    </tr>
+    `;
+    res.monthly_breakup.forEach(row => {
+    html += `
+    <tr>
+        <td>1</td>
+        <td>${row.month}/${row.year}</td>
+        <td>${row.base_amount}</td>
+        <td>${row.late_fee}</td>
+        <td><b>${row.total}</b></td>
+    </tr>
+    `;
+    });
+    html += `
+</table>`;
+$('#maintenanceTable').html(html);
+$('#amount').val(res.total_amount);
+}
+});
+}
 @endsection

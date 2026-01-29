@@ -1,7 +1,9 @@
 <?php
+
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 if (!function_exists('getSiteUrl')) {
     /**
      * Return the base site URL.
@@ -43,11 +45,10 @@ if (!function_exists('getBreadCrumData')) {
 
         $segment = Request::segments();
         $lastData = end($segment);
-        if($lastData =='edit'){
+        if ($lastData == 'edit') {
             $newUrl = implode('/', array_slice($segment, 0, -2));
-        } else if($lastData =='create'){
+        } else if ($lastData == 'create') {
             $newUrl = implode('/', array_slice($segment, 0, -1));
-
         } else {
             $newUrl = $route->uri;
         }
@@ -56,7 +57,7 @@ if (!function_exists('getBreadCrumData')) {
         $menuId = $menu->id;
 
         $hierarchy = [];
-        if ( request()->isMethod('get')  && str_contains(request()->path(), 'edit')) {
+        if (request()->isMethod('get')  && str_contains(request()->path(), 'edit')) {
             $menu = (object) array(
                 "id" => null,
                 'name' => "edit",
@@ -78,7 +79,37 @@ if (!function_exists('getBreadCrumData')) {
         return $hierarchy;
     }
 }
-
+if (!function_exists('lastTenYears')) {
+    function lastTenYears()
+    {
+        return range(date('Y'), date('Y') - 9);
+    }
+}
+if (!function_exists('generateRecurringExpenses')) {
+    function generateRecurringExpenses($selection = '')
+    {
+        $paymentFrequency = [
+            '1' => 'Monthly',
+            '2' => 'Quarterly',
+            '3' => 'Half yearly',
+            '4' => 'Weekly',
+            '5' => 'One time'
+        ];
+        return ($selection) ? $paymentFrequency[$selection] :  $paymentFrequency;
+    }
+}
+if (!function_exists('getPaymentModeArray')) {
+    function getPaymentModeArray($selection = '')
+    {
+        $paymentMode = [
+            'cash' => 'cash',
+            'bank' => 'bank',
+            'upi' => 'upi',
+            'cheque' => 'cheque'
+        ];
+        return ($selection) ? $paymentMode[$selection] :  $paymentMode;
+    }
+}
 
 if (!function_exists('getIconList')) {
     /**

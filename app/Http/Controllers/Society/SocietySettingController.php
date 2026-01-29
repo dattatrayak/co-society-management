@@ -27,7 +27,7 @@ class SocietySettingController extends Controller
         $maintenances = SocietyFlatTypeMaintenance::with('flatType')->get();
         $flatTypes = SocietyFlatType::where('status', 1)->get();
         $settings = SocietySetting::paginate(10);
-        return view('society.society_setting.index', compact('settings', 'maintenances','flatTypes'));
+        return view('society.society_setting.index', compact('settings', 'maintenances', 'flatTypes'));
     }
 
     /**
@@ -44,13 +44,15 @@ class SocietySettingController extends Controller
      * Store new setting
      */
     public function store(Request $request)
-    { 
+    {
         $request->validate([
             'society_flat_type_id' => 'required|exists:society_flat_types,id|unique:society_flat_type_maintenances,society_flat_type_id',
             'maintenance_amount'   => 'required|numeric|min:0',
         ]);
-
-        SocietyFlatTypeMaintenance::create($request->all());
+        $requestData = $request->all();
+        $requestData['society_id'] = $this->userId;
+        $requestData['created_by'] = $this->userId;
+        SocietyFlatTypeMaintenance::create($requestData);
         return redirect()
             ->route('society.setting.index')
             ->with('success', 'Society setting created successfully');
@@ -61,7 +63,7 @@ class SocietySettingController extends Controller
      */
     public function edit($id)
     {
-         
+
         $maintenance = SocietyFlatTypeMaintenance::findOrFail($id);
         $flatTypes = SocietyFlatType::where('status', 1)->get();
 
@@ -80,7 +82,10 @@ class SocietySettingController extends Controller
         ]);
 
         $maintenance = SocietyFlatTypeMaintenance::findOrFail($id);
-        $maintenance->update($request->all());
+        $requestData = $request->all();
+        $requestData['society_id'] = $this->userId;
+        $requestData['updated_by'] = $this->userId;
+        $maintenance->update($requestData);
 
         return redirect()
             ->route('society.setting.index')
@@ -103,7 +108,7 @@ class SocietySettingController extends Controller
      * Update setting
      */
     public function storeOrUpdate(Request $request)
-    { 
+    {
         $request->validate([
             'maintenance_late_fee' => 'required|numeric|min:0',
             'late_fee_type' => 'required|in:fixed,percentage',
@@ -118,17 +123,17 @@ class SocietySettingController extends Controller
                 'grace_days' => $request->grace_days,
             ]
         );
-  return response()->json([
-        'status' => true,
-        'message' => 'Society settings saved successfully' 
-    ]); 
+        return response()->json([
+            'status' => true,
+            'message' => 'Society settings saved successfully'
+        ]);
     }
 
     /**
      * Delete setting
      */
     public function destroy($id)
-    { 
+    {
         // SocietyFlatTypeMaintenance::findOrFail($id)->delete();
         return redirect()
             ->route('society.setting.index')

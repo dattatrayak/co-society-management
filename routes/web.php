@@ -11,10 +11,12 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserTypeController;
 use App\Http\Controllers\Admin\UserTypePermissionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Society\AccountController;
 use App\Http\Controllers\Society\BuildingController;
 use App\Http\Controllers\Society\CashCategoryController;
 use App\Http\Controllers\Society\DashbaordSocietyController;
+use App\Http\Controllers\Society\ExpenseController as SocietyExpenseController;
 use App\Http\Controllers\Society\FlatController;
 use App\Http\Controllers\Society\FlatTypeMaintenanceController;
 use App\Http\Controllers\Society\MaintenanceController;
@@ -78,4 +80,7 @@ Route::prefix('society')
         Route::put('setting/{id}/maintainance', [SocietySettingController::class, 'storeOrUpdate'])
             ->name('society.storeOrUpdate.save');
         Route::resource('expencess-type', CashCategoryController::class);
+        Route::post('maintenance/calculate', [MaintenanceController::class, 'calculateMaintenance']
+        )->name('maintenance.calculate');
+        Route::resource('expencess', SocietyExpenseController::class);
     });
