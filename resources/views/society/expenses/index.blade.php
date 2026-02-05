@@ -11,6 +11,7 @@
             </a>
         </div>
         <div class="col-xl-12">
+            
             <form method="GET" action="{{ route('society.maintenance.index') }}" class="mb-3">
                 <div class="row mt-2">
                     <!-- Search -->
@@ -24,6 +25,7 @@
                     </div>
                 </div>
             </form>
+           
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>

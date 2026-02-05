@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\ExpencessRepository;
 use App\Models\Expense;
 use App\Models\CashTransaction;
 use App\Models\CashCategory;
@@ -12,12 +13,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends Controller
 {
     private $userId = null;
 
-    public function __construct()
+    public function __construct(private ExpencessRepository $expencessRepository)
     {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
@@ -63,6 +65,7 @@ class ExpenseController extends Controller
             'check_no' => 'nullable|string',
             'attachment' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'reference_no' => 'nullable|string',
+            'parent_expense_id' => 'nullable|integer|exists:expenses,id',
             'note' => 'nullable|string',
         ]);
 
@@ -105,6 +108,7 @@ class ExpenseController extends Controller
                 'check_no' => $data['check_no'] ?? null,
                 'attachment' => $data['attachment'] ?? null,
                 'reference_no' => $data['reference_no'] ?? null,
+                'parent_expense_id' => $data['parent_expense_id'] ?? null,
                 'status' => 'paid',
                 'paid_on' => now(),
                 'note' => $data['note'] ?? null,
@@ -123,7 +127,12 @@ class ExpenseController extends Controller
     public function edit($id)
     {
         $expense = Expense::withTrashed()->findOrFail($id);
+        $parentExpense = null;
 
+        if ($expense->parent_expense_id) {
+            $parentExpense = Expense::find($expense->parent_expense_id);
+        }
+        //  dd($expense->parent_expense_id);
         $cashCategories = CashCategory::select('id', 'name')->where('type', 'expense')->get();
         $members = SocietyMember::all();
         $frequency = generateRecurringExpenses();
@@ -134,13 +143,14 @@ class ExpenseController extends Controller
             'members',
             'frequency',
             'payment_mode',
+            'parentExpense'
 
         ));
     }
 
     public function update(Request $request, $id)
     {
-       $expense = Expense::withTrashed()->findOrFail($id);
+        $expense = Expense::withTrashed()->findOrFail($id);
         $data = $request->validate([
             'cash_category_id' => 'required|exists:cash_categories,id',
             'member_id' => 'nullable|exists:society_members,id',
@@ -151,13 +161,14 @@ class ExpenseController extends Controller
             'paid_to_name' => 'nullable|string',
             'paid_to' => 'nullable|string',
             'check_no' => 'nullable|string',
+            'parent_expense_id' => 'nullable|integer|exists:expenses,id',
             'attachment' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'reference_no' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
- 
+
         try {
 
             /* ===============================
@@ -206,6 +217,7 @@ class ExpenseController extends Controller
                 'paid_to' => $data['paid_to'],
                 'check_no' => $data['check_no'] ?? null,
                 'attachment' => $data['attachment'],
+                'parent_expense_id' => $data['parent_expense_id'] ?? null,
                 'reference_no' => $data['reference_no'] ?? null,
                 'note' => $data['note'] ?? null,
             ]);
@@ -220,7 +232,19 @@ class ExpenseController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+    public function searchParent(Request $request)
+    {
+        $expenses = $this->expencessRepository->getExpencessParent($request);
 
+        return response()->json(
+            $expenses->map(function ($e) {
+                return [
+                    'id' => $e->id,
+                    'text' => "Ref#{$e->id} | {$e->paid_to_name} | ₹{$e->amount}"
+                ];
+            })
+        );
+    }
     public function destroy(Expense $expense)
     {
         $expense->delete();

@@ -63,13 +63,17 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Parent Expense Reference</label>
+                            <select name="parent_expense_id" id="parent_expense_id" class="form-control select2bs"></select>
+                        </div>
 
-                        <div class="col-md-2 mb-3">
+                        <!--div class="col-md-2 mb-3">
                             <label>Reference </label>
                             <input type="text" name="reference_no"
                                 value="{{ $expense->reference_no ?? '' }}"
                                 class="form-control">
-                        </div>
+                        </div -->
                         <div class="col-md-2 mb-3">
                             <label>Cheque No</label>
                             <input type="text" name="check_no"
@@ -80,7 +84,7 @@
                         <div class="row">
                             <div class="col-md-2 mb-3">
                                 <label>Payment given to</label>
-                                <select name="paid_to" class="form-control">
+                                <select name="paid_to" id="paid_to" class="form-control">
                                     <option value="member" {{ isset($expense) && $expense->paid_to == 'member' ? 'selected' : '' }}>Member</option>
                                     <option value="other" {{ isset($expense) && $expense->paid_to == 'other' ? 'selected' : '' }}>Other</option>
                                 </select>
@@ -120,7 +124,7 @@
                             </div>
                             @if(isset($expense) && $expense->attachment)
                             <div class="col-2  col-sm-2 col-md-2">
-                                <div class="upload_gallery" id="previewGallery1"> 
+                                <div class="upload_gallery" id="previewGallery1">
                                     <div class="img-container">
                                         <img src="{{ asset('storage/expencess_attachment/' . $expense->attachment) }}" width="200">
                                     </div>
@@ -155,13 +159,66 @@
     </div>
 </div>
 @endsection
+<style>
+.select2bs + .select2-container .select2-selection--single {
+    height: 37px !important;
+    border: 1px solid #ced4da !important;
+}
+    </style>
+@section('addJs')
+
+<link rel="stylesheet" href="{{  asset('theme/css/select2.min.css') }}" rel="stylesheet">
+<script src="{{ asset('theme/js/select2.min.js') }}"></script>
+@endsection
 @section('scriptDockReady')
+togglePaidTo();
+
 $('#flat_id, #year, #month, #to_year, #to_month')
 .on('change', function () {
 calculateMaintenance();
 });
+document.getElementById('paid_to').addEventListener('change', togglePaidTo);
 @endsection
 @section('script')
+@if(isset($parentExpense))
+    var option = new Option(
+        'Ref: {{ $parentExpense->reference_no }} - ₹{{ $parentExpense->amount }}',
+        '{{ $parentExpense->id }}',
+        true,
+        true
+    );
+    $('#parent_expense_id').append(option).trigger('change');
+@endif
+$('#parent_expense_id').select2({
+    placeholder: 'Search parent expense by id / name / amount',
+    ajax: {
+        url: '{{ route("society.expencess.searchParent") }}',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return { q: params.term };
+        },
+        processResults: function (data) {
+            return { results: data };
+        },
+        cache: true
+    }
+});
+window.addEventListener('load', togglePaidTo);
+function togglePaidTo() {
+var paidTo = document.getElementById('paid_to').value;
+
+var memberDiv = document.getElementById('member_id_hide');
+var nameDiv = document.getElementById('paid_to_name_hide');
+
+if (paidTo === 'member') {
+memberDiv.style.display = 'block';
+nameDiv.style.display = 'none';
+} else {
+memberDiv.style.display = 'none';
+nameDiv.style.display = 'block';
+}
+}
 function calculateMaintenance() {
 $.ajax({
 url: "{{ route('society.maintenance.calculate') }}",

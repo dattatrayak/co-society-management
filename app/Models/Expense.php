@@ -25,6 +25,7 @@ class Expense extends Model
         'status',
         'paid_to',
         'paid_on',
+        'parent_expense_id',
         'note',
         'created_by',
         'updated_by',

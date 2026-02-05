@@ -5,11 +5,11 @@
         @include('society.layout.site_header')
 
         <div class="row">
-            <div class="col-xl-12"> 
+            <div class="col-xl-12">
                 <x-society-member-form
                         :action="route('society.member.store')"
-                        method="POST" 
-                        :societies="$societies" 
+                        method="POST"
+                        :societies="$societies"
                         :buildings="$buildings"
                         :flats="$flats"
                     />
@@ -19,8 +19,8 @@
 @endsection
 
 @section('addJs') 
-<link rel="stylesheet" href="{{  asset('theme/css/select2.min.css') }}" rel="stylesheet"> 
-<script src="{{ asset('theme/js/select2.min.js') }}" ></script> 
+<link rel="stylesheet" href="{{  asset('theme/css/select2.min.css') }}" rel="stylesheet">
+<script src="{{ asset('theme/js/select2.min.js') }}" ></script>
     
 @endsection
 @vite(['resources/css/app.css', 'resources/js/app.js'])

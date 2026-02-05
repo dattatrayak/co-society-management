@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('check_no')->nullable();
             $table->string('attachment')->nullable();
             $table->string('reference_no')->nullable();
+            $table->unsignedBigInteger('parent_expense_id')->nullable();
 
             $table->enum('status', ['paid', 'pending'])->default('paid');
             $table->enum('paid_to', ['member', 'other'])->default('member');
@@ -50,6 +51,10 @@ return new class extends Migration
             $table->foreign('cash_transactions_id')
                 ->references('id')
                 ->on('cash_transactions')
+                ->onDelete('set null');
+            $table->foreign('parent_expense_id')
+                ->references('id')
+                ->on('expenses')
                 ->onDelete('set null');
         });
     }

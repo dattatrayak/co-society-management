@@ -5,40 +5,42 @@ namespace App\Http\Controllers\Society;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\BuildingRepository;
 use App\Http\Repository\FlatRepository;
+use App\Http\Repository\MaintenanceRepository;
 use App\Http\Repository\MeterRepository;
 use App\Models\Building;
-use App\Models\CashTransaction;
-use App\Models\ElectricityMeter;
+use App\Models\CashTransaction; 
 use App\Models\Flat;
-use App\Models\MaintenanceRecord;
-use App\Models\SocietyFlatType;
-use App\Models\SocietyFlatTypeMaintenance;
-use App\Services\MaintenanceCalculatorService;
-use Illuminate\Database\QueryException;
+use App\Models\MaintenanceRecord; 
+use App\Services\MaintenanceCalculatorService; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
+use App\Exports\MaintenanceRecordsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 class MaintenanceController extends Controller
 {
     private $userId = null;
     private $meterRepository = null;
     private $buildingRepository = null;
     private $flatRepository = null;
+    private $maintenanceRepository = null;
 
     public function __construct(
         MeterRepository $meterRepository,
         BuildingRepository $buildingRepository,
         private MaintenanceCalculatorService $maintenanceCalculatorService,
-        FlatRepository $flatRepository
+        FlatRepository $flatRepository,
+        MaintenanceRepository $maintenanceRepository
     ) {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
         $this->meterRepository = $meterRepository;
         $this->buildingRepository = $buildingRepository;
         $this->flatRepository = $flatRepository;
+        $this->maintenanceRepository = $maintenanceRepository;
     }
     /**
      * Display a listing of the resource.
@@ -48,36 +50,8 @@ class MaintenanceController extends Controller
 
         $buildings = Building::where('society_id', $this->userId)->select('name', 'id')->get();
         $societyFlatType = $this->flatRepository->getFlatTypeDropdown();
-        $search = $request->input('search', '');
-        $building_id = $request->input('building_id', null);
-        $flat_type = $request->input('flat_type', null);
-
-        $records = MaintenanceRecord::with(['flat.flatType', 'building'])
-            ->when($request->year, function ($q) use ($request) {
-                $q->where('year', $request->year);
-            })
-            ->when($request->month, function ($q) use ($request) {
-                $q->where('month', $request->month);
-            })
-            ->when($request->status, function ($q) use ($request) {
-                $q->where('status', $request->status);
-            })
-            ->when($search, function ($q) use ($search) {
-                $q->whereHas('flat', function ($q) use ($search) {
-                    $q->where('flat_no', 'LIKE', "%{$search}%");
-                });
-            })
-            ->when($building_id, function ($q) use ($building_id) {
-                $q->where('building_id', $building_id);
-            })
-            ->when($flat_type, function ($q) use ($flat_type) {
-                $q->whereHas('flat', function ($q) use ($flat_type) {
-                    $q->where('society_flat_type_id', $flat_type);
-                });
-            })
-            ->orderByDesc('year')
-            ->orderByDesc('month')
-            ->paginate(15);
+        // $records = $this->maintenanceRepository->getMaintainaceRecords($request);
+        $records = $this->maintenanceRepository->paginate($request);
 
         return view('society.maintenance.index', compact('records', 'buildings', 'societyFlatType'));
     }
@@ -312,6 +286,13 @@ class MaintenanceController extends Controller
 
         return response()->json($result);
     }
+
+    public function exportsss(Request $request)
+    {
+       
+       
+    }
+ 
     /**
      * Delete maintenance record
      */
