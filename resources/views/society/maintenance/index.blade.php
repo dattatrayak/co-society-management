@@ -40,12 +40,30 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-1">
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-2">
+                        <label>From Year</label>
+                        <input type="number" name="from_year" class="form-control">
+                    </div> 
+                    <div class="col-md-2">
+                        <label>From Month</label>
+                        <input type="number" name="from_month" min="1" max="12" class="form-control">
+                    </div> 
+                    <div class="col-md-2">
+                        <label>To Year</label>
+                        <input type="number" name="to_year" class="form-control">
+                    </div> 
+                    <div class="col-md-2">
+                        <label>To Month</label>
+                        <input type="number" name="to_month" min="1" max="12" class="form-control">
+                    </div> 
+                    <div class="col-md-1 mt-4">
                         <button type="submit" class="btn btn-primary w-100">Search</button>
                     </div>
                 </div>
             </form>
- 
+
 
 
             <table class="table table-bordered table-striped">

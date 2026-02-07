@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
 
-class ExpenseController extends Controller
+class IncomeController extends Controller
 {
     private $userId = null;
 
@@ -27,22 +26,25 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $expenses = Expense::with(['cashCategory', 'member'])
+            ->whereHas('cashCategory', function ($q) {
+                $q->where('type', 'income');
+            })
             ->when($request->year, fn($q) => $q->whereYear('expense_date', $request->year))
             ->when($request->month, fn($q) => $q->whereMonth('expense_date', $request->month))
             ->when($request->status, fn($q) => $q->where('status', $request->status))
             ->orderByDesc('expense_date')
             ->paginate(15);
 
-        return view('society.expenses.index', compact('expenses'));
+        return view('society.income.index', compact('expenses'));
     }
 
     public function create()
     {
-        $cashCategories = CashCategory::select('id', 'name')->where('type', 'expense')->get();
+        $cashCategories = CashCategory::select('id', 'name')->where('type', 'income')->get();
         $members = SocietyMember::all();
         $frequency = generateRecurringExpenses();
         $payment_mode = getPaymentModeArray();
-        return view('society.expenses.create', compact(
+        return view('society.income.create', compact(
             'cashCategories',
             'members',
             'frequency',
@@ -52,20 +54,20 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-
+ 
         $data = $request->validate([
             'cash_category_id' => 'required|exists:cash_categories,id',
             'member_id' => 'nullable|exists:society_members,id',
             'frequency' => 'required',
-            'expense_date' => 'required|date',
+            'income_date' => 'required|date',
             'amount' => 'required|numeric|min:1',
             'payment_mode' => 'required',
             'paid_to_name' => 'nullable|string',
             'paid_to' => 'nullable|string',
             'check_no' => 'nullable|string',
             'attachment' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            //'reference_no' => 'nullable|string',
-            'parent_expense_id' => 'nullable|integer|exists:expenses,id',
+           // 'reference_no' => 'nullable|string',
+            'parent_income_id' => 'nullable|integer|exists:expenses,id',
             'note' => 'nullable|string',
         ]);
 
@@ -84,8 +86,8 @@ class ExpenseController extends Controller
             $cashTransaction = CashTransaction::create([
                 'society_id' => $this->userId,
                 'cash_category_id' => $data['cash_category_id'],
-                'transaction_date' => $data['expense_date'],
-                'transaction_type' => 'expense',
+                'transaction_date' => $data['income_date'],
+                'transaction_type' => 'income',
                 'amount' => $data['amount'],
                 'payment_mode' => $data['payment_mode'],
                 //'reference_no' => $data['reference_no'],
@@ -100,7 +102,7 @@ class ExpenseController extends Controller
                 'cash_transactions_id' => $cashTransaction->id,
                 'society_members_id' => $data['member_id'] ?? null,
                 'frequency' => $data['frequency'],
-                'expense_date' => $data['expense_date'],
+                'expense_date' => $data['income_date'],
                 'amount' => $data['amount'],
                 'payment_mode' => $data['payment_mode'],
                 'paid_to_name' => $data['paid_to_name'],
@@ -108,7 +110,7 @@ class ExpenseController extends Controller
                 'check_no' => $data['check_no'] ?? null,
                 'attachment' => $data['attachment'] ?? null,
                 //'reference_no' => $data['reference_no'] ?? null,
-                'parent_expense_id' => $data['parent_expense_id'] ?? null,
+                'parent_expense_id' => $data['parent_income_id'] ?? null,
                 'status' => 'paid',
                 'paid_on' => now(),
                 'note' => $data['note'] ?? null,
@@ -116,8 +118,8 @@ class ExpenseController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->route('society.expencess.index')
-                ->with('success', 'Expense added successfully');
+            return redirect()->route('society.income.index')
+                ->with('success', 'Income added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', $e->getMessage());
@@ -126,44 +128,44 @@ class ExpenseController extends Controller
 
     public function edit($id)
     {
-        $expense = Expense::withTrashed()->findOrFail($id);
-        $parentExpense = null;
+        $income = Expense::withTrashed()->findOrFail($id);
+      
+        $parentIncome = null;
 
-        if ($expense->parent_expense_id) {
-            $parentExpense = Expense::find($expense->parent_expense_id);
+        if ($income->parent_expense_id) {
+            $parentIncome = Expense::find($income->parent_expense_id);
         }
-        //  dd($expense->parent_expense_id);
-        $cashCategories = CashCategory::select('id', 'name')->where('type', 'expense')->get();
+        $cashCategories = CashCategory::select('id', 'name')->where('type', 'income')->get();
         $members = SocietyMember::all();
         $frequency = generateRecurringExpenses();
         $payment_mode = getPaymentModeArray();
-        return view('society.expenses.create', compact(
-            'expense',
+        return view('society.income.create', compact(
+            'income',
             'cashCategories',
             'members',
             'frequency',
             'payment_mode',
-            'parentExpense'
+            'parentIncome'
 
         ));
     }
 
     public function update(Request $request, $id)
     {
-        $expense = Expense::withTrashed()->findOrFail($id);
+        $income = Expense::withTrashed()->findOrFail($id);
         $data = $request->validate([
             'cash_category_id' => 'required|exists:cash_categories,id',
             'member_id' => 'nullable|exists:society_members,id',
             'frequency' => 'required',
-            'expense_date' => 'required|date',
+            'income_date' => 'required|date',
             'amount' => 'required|numeric|min:1',
             'payment_mode' => 'required',
             'paid_to_name' => 'nullable|string',
             'paid_to' => 'nullable|string',
             'check_no' => 'nullable|string',
-            'parent_expense_id' => 'nullable|integer|exists:expenses,id',
+            'parent_income_id' => 'nullable|integer|exists:expenses,id',
             'attachment' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            //'reference_no' => 'nullable|string',
+          //  'reference_no' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
 
@@ -177,8 +179,8 @@ class ExpenseController extends Controller
             if ($request->hasFile('attachment')) {
 
                 // Delete old attachment if exists
-                if ($expense->attachment && Storage::disk('public')->exists('expencess_attachment/' . $expense->attachment)) {
-                    Storage::disk('public')->delete('expencess_attachment/' . $expense->attachment);
+                if ($income->attachment && Storage::disk('public')->exists('expencess_attachment/' . $income->attachment)) {
+                    Storage::disk('public')->delete('expencess_attachment/' . $income->attachment);
                 }
 
                 $file = $request->file('attachment');
@@ -188,67 +190,67 @@ class ExpenseController extends Controller
                 $data['attachment'] = $filename;
             } else {
                 // Keep old attachment
-                $data['attachment'] = $expense->attachment;
+                $data['attachment'] = $income->attachment;
             }
 
             /* ===============================
            Update cash transaction
         ================================*/
-            $expense->cashTransaction->update([
+            $income->cashTransaction->update([
                 'cash_category_id' => $data['cash_category_id'],
-                'transaction_date' => $data['expense_date'],
+                'transaction_date' => $data['income_date'],
                 'amount' => $data['amount'],
                 'payment_mode' => $data['payment_mode'],
-                //'reference_no' => $data['reference_no'],
+                'reference_no' => '',
                 'description' => $data['note'],
             ]);
 
             /* ===============================
            Update expense
         ================================*/
-            $expense->update([
+            $income->update([
                 'cash_category_id' => $data['cash_category_id'],
                 'society_members_id' => $data['member_id'] ?? null,
                 'frequency' => $data['frequency'],
-                'expense_date' => $data['expense_date'],
+                'expense_date' => $data['income_date'],
                 'amount' => $data['amount'],
                 'payment_mode' => $data['payment_mode'],
                 'paid_to_name' => $data['paid_to_name'],
                 'paid_to' => $data['paid_to'],
                 'check_no' => $data['check_no'] ?? null,
                 'attachment' => $data['attachment'],
-                'parent_expense_id' => $data['parent_expense_id'] ?? null,
-                //'reference_no' => $data['reference_no'] ?? null,
+                'parent_expense_id' => $data['parent_income_id'] ?? null,
+               // 'reference_no' => $data['reference_no'] ?? null,
                 'note' => $data['note'] ?? null,
             ]);
 
             DB::commit();
 
             return redirect()
-                ->route('society.expencess.index')
-                ->with('success', 'Expense updated successfully');
+                ->route('society.income.index')
+                ->with('success', 'Income updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', $e->getMessage());
         }
     }
-    public function searchParent(Request $request)
-    {
-        $expenses = $this->expencessRepository->getExpencessParent($request);
+    // public function searchParent(Request $request)
+    // {
+    //     $income = $this->expencessRepository->getExpencessParent($request);
 
-        return response()->json(
-            $expenses->map(function ($e) {
-                return [
-                    'id' => $e->id,
-                    'text' => "Ref#{$e->id} | {$e->paid_to_name} | ₹{$e->amount}"
-                ];
-            })
-        );
-    }
+    //     return response()->json(
+    //         $income->map(function ($e) {
+    //             return [
+    //                 'id' => $e->id,
+    //                 'text' => "Ref#{$e->id} | {$e->paid_to_name} | ₹{$e->amount}"
+    //             ];
+    //         })
+    //     );
+    // }
     public function destroy(Expense $expense)
     {
         $expense->delete();
 
-        return back()->with('success', 'Expense deleted');
+        return back()->with('success', 'Income deleted');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\AccountRepository;
 use App\Http\Repository\BuildingRepository;
 use App\Http\Repository\MeterRepository;
 use App\Models\Building;
@@ -13,24 +14,21 @@ use Illuminate\Support\Facades\Auth;
 class AccountController extends Controller
 {
     private $userId = null;
-    private $meterRepository = null;
-    private $buildingRepository = null;
+    private $accountRepository = null; 
 
-    public function __construct(MeterRepository $meterRepository, BuildingRepository $buildingRepository)
+    public function __construct(AccountRepository $accountRepository )
     {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
-        $this->meterRepository = $meterRepository;
-        $this->buildingRepository = $buildingRepository;
+        $this->accountRepository = $accountRepository;
     }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $buildings = Building::where('society_id', $this->userId)->select('name', 'id')->get();
-        $meters = ElectricityMeter::with('society')->with('building')->paginate(10);
-        return view('society.meter.index', compact('meters', 'buildings'));
+        $balance = $this->accountRepository->getBalances();
+        return view('society.account.index', compact('balance'));
     }
 
     /**
@@ -38,7 +36,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
+        //$buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
         return view('society.meter.create', compact('buildings'));
     }
 
@@ -71,7 +69,7 @@ class AccountController extends Controller
      */
     public function edit(ElectricityMeter $meter)
     {
-        $buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
+        //$buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
         return view('society.meter.edit', compact('meter', 'buildings'));
     }
 

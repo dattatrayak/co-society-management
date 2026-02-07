@@ -6,13 +6,13 @@
 
     <div class="row">
         <div class="col-xl-12">
-            <a href="{{ route('society.expencess.create') }}" class="btn btn-primary">
-                + Add Expense
+            <a href="{{ route('society.income.create') }}" class="btn btn-primary">
+                + Add Income
             </a>
         </div>
         <div class="col-xl-12">
             
-            <form method="GET" action="{{ route('society.maintenance.index') }}" class="mb-3">
+            <form method="GET" action="{{ route('society.income.index') }}" class="mb-3">
                 <div class="row mt-2">
                     <!-- Search -->
                     <div class="col-md-4">
@@ -24,10 +24,7 @@
                         <button type="submit" class="btn btn-primary w-100">Search</button>
                     </div>
                 </div>
-            </form>
-           <a href="{{ route('society.expenses.export') }}" class="btn btn-success">
-    Download Expense Report
-</a>
+            </form> 
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -52,10 +49,10 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('society.expencess.edit', $expense->id) }}"
+                            <a href="{{ route('society.income.edit', $expense->id) }}"
                                 class="btn btn-sm btn-info">Edit</a>
 
-                            <form action="{{ route('society.expencess.destroy', $expense->id) }}"
+                            <form action="{{ route('society.income.destroy', $expense->id) }}"
                                 method="POST" class="d-inline"
                                 onsubmit="return confirm('Are you sure?');">
                                 @csrf

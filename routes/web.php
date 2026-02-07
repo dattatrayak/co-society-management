@@ -16,7 +16,9 @@ use App\Http\Controllers\Society\BuildingController;
 use App\Http\Controllers\Society\CashCategoryController;
 use App\Http\Controllers\Society\DashbaordSocietyController;
 use App\Http\Controllers\Society\ExpenseController;
+use App\Http\Controllers\Society\ExpenseReportController;
 use App\Http\Controllers\Society\FlatController;
+use App\Http\Controllers\Society\IncomeController;
 use App\Http\Controllers\Society\MaintenanceController;
 use App\Http\Controllers\Society\MetterController;
 use App\Http\Controllers\Society\SiteUserController;
@@ -87,9 +89,13 @@ Route::prefix('society')
             'maintenance/export',
             [MaintenanceController::class, 'export']
         )->name('maintenance.export');
+        Route::get('society/expenses/export', [ExpenseReportController::class, 'export'])
+            ->name('expenses.export');
         Route::get(
             'expencess/search-parent',
             [ExpenseController::class, 'searchParent']
         )->name('expencess.searchParent');
         Route::resource('expencess', ExpenseController::class);
+
+         Route::resource('income', IncomeController::class);
     });
