@@ -67,6 +67,7 @@ class ExpenseController extends Controller
             //'reference_no' => 'nullable|string',
             'parent_expense_id' => 'nullable|integer|exists:expenses,id',
             'note' => 'nullable|string',
+            'status' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -81,23 +82,25 @@ class ExpenseController extends Controller
             }
 
             // Create cash transaction
-            $cashTransaction = CashTransaction::create([
-                'society_id' => $this->userId,
-                'cash_category_id' => $data['cash_category_id'],
-                'transaction_date' => $data['expense_date'],
-                'transaction_type' => 'expense',
-                'amount' => $data['amount'],
-                'payment_mode' => $data['payment_mode'],
-                //'reference_no' => $data['reference_no'],
-                'description' => $data['note'],
-                'created_by' => $this->userId,
-            ]);
+            if ($data['status'] == 'paid') {
+                $cashTransaction = CashTransaction::create([
+                    'society_id' => $this->userId,
+                    'cash_category_id' => $data['cash_category_id'],
+                    'transaction_date' => $data['expense_date'],
+                    'transaction_type' => 'expense',
+                    'amount' => $data['amount'],
+                    'payment_mode' => $data['payment_mode'],
+                    //'reference_no' => $data['reference_no'],
+                    'description' => $data['note'],
+                    'created_by' => $this->userId,
+                ]);
+            }
 
             // Create expense
             Expense::create([
                 'society_id' => $this->userId,
                 'cash_category_id' => $data['cash_category_id'],
-                'cash_transactions_id' => $cashTransaction->id,
+                'cash_transactions_id' => isset($cashTransaction) ? $cashTransaction->id : null,
                 'society_members_id' => $data['member_id'] ?? null,
                 'frequency' => $data['frequency'],
                 'expense_date' => $data['expense_date'],
@@ -109,7 +112,7 @@ class ExpenseController extends Controller
                 'attachment' => $data['attachment'] ?? null,
                 //'reference_no' => $data['reference_no'] ?? null,
                 'parent_expense_id' => $data['parent_expense_id'] ?? null,
-                'status' => 'paid',
+                'status' => $data['status'] ?? 'paid',
                 'paid_on' => now(),
                 'note' => $data['note'] ?? null,
                 'created_by' => $this->userId,
@@ -165,6 +168,7 @@ class ExpenseController extends Controller
             'attachment' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             //'reference_no' => 'nullable|string',
             'note' => 'nullable|string',
+            'status' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -194,14 +198,28 @@ class ExpenseController extends Controller
             /* ===============================
            Update cash transaction
         ================================*/
-            $expense->cashTransaction->update([
-                'cash_category_id' => $data['cash_category_id'],
-                'transaction_date' => $data['expense_date'],
-                'amount' => $data['amount'],
-                'payment_mode' => $data['payment_mode'],
-                //'reference_no' => $data['reference_no'],
-                'description' => $data['note'],
-            ]);
+            if ($data['status'] == 'paid' && $expense->cash_transactions_id) {
+                $expense->cashTransaction->update([
+                    'cash_category_id' => $data['cash_category_id'],
+                    'transaction_date' => $data['expense_date'],
+                    'amount' => $data['amount'],
+                    'payment_mode' => $data['payment_mode'],
+                    //'reference_no' => $data['reference_no'],
+                    'description' => $data['note'],
+                ]);
+            } else {
+                $cashTransaction = CashTransaction::create([
+                    'society_id' => $this->userId,
+                    'cash_category_id' => $data['cash_category_id'],
+                    'transaction_date' => $data['expense_date'],
+                    'transaction_type' => 'expense',
+                    'amount' => $data['amount'],
+                    'payment_mode' => $data['payment_mode'],
+                    //'reference_no' => $data['reference_no'],
+                    'description' => $data['note'],
+                    'created_by' => $this->userId,
+                ]);
+            }
 
             /* ===============================
            Update expense
@@ -209,6 +227,7 @@ class ExpenseController extends Controller
             $expense->update([
                 'cash_category_id' => $data['cash_category_id'],
                 'society_members_id' => $data['member_id'] ?? null,
+                'cash_transactions_id' => isset($cashTransaction) ? $cashTransaction->id : $expense->cash_transactions_id,
                 'frequency' => $data['frequency'],
                 'expense_date' => $data['expense_date'],
                 'amount' => $data['amount'],
@@ -220,6 +239,7 @@ class ExpenseController extends Controller
                 'parent_expense_id' => $data['parent_expense_id'] ?? null,
                 //'reference_no' => $data['reference_no'] ?? null,
                 'note' => $data['note'] ?? null,
+                'status' => $data['status'] ?? 'paid',
             ]);
 
             DB::commit();

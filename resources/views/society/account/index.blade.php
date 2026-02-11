@@ -28,6 +28,20 @@
                 </div>
             </div>
         </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    Account Balance
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Total Pending</h5>
+                    <p class="card-text">Income Cash Painding: {{ $balance['pending_income_cash']->total_amount ?? 0 }} </p>
+                    <p class="card-text">Income Bank Painding: {{ $balance['pending_income_bank']->total_amount ?? 0 }}</p>
+                    <p class="card-text">Expences Cash Painding: {{ $balance['pending_expense_cash']->total_amount ?? 0 }}</p>
+                    <p class="card-text">Expences Bank Painding: {{ $balance['pending_expense_bank']->total_amount ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

@@ -35,6 +35,7 @@ class ExpenseReportExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
+             'Sr No' ,
             'Date',
             'Category',
             'Paid To',
