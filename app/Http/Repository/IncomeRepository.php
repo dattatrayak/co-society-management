@@ -8,7 +8,7 @@ use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ExpencessRepository
+class IncomeRepository
 {
 
     private $userId = null;
@@ -17,24 +17,14 @@ class ExpencessRepository
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
     }
-    public function getExpencessParent(Request $request)
-    {
-        $term = $request->q;
-        return Expense::whereNull('parent_expense_id') // only parents
-            ->where('society_id', $this->userId)
-            ->where(function ($q) use ($term) {
-                $q->where('id', 'like', "%$term%")
-                    ->orWhere('paid_to_name', 'like', "%$term%")
-                    ->orWhere('amount', 'like', "%$term%")
-                    ->orWhere('note', 'like', "%$term%");
-            })
-            ->limit(10)
-            ->get();
-    }
-
     public function baseQuery(Request $request)
     {
+
+
         return  Expense::with(['cashCategory', 'member'])
+            ->whereHas('cashCategory', function ($q) {
+                $q->where('type', 'income');
+            })
             ->where('society_id', $this->userId)
             ->when($request->search, function ($q) use ($request) {
                 $q->where('amount', 'like', "%{$request->search}%")
@@ -65,9 +55,7 @@ class ExpencessRepository
             })
             ->when($request->status, function ($q) use ($request) {
                 $q->where('status', $request->status);
-            })
-
-            ->orderByDesc('expense_date');
+            })->orderByDesc('expense_date');
     }
     /**
      * Get paginated records for listing

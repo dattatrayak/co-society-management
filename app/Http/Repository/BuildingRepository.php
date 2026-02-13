@@ -4,6 +4,7 @@
 namespace App\Http\Repository;
 
 use App\Models\Building;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BuildingRepository
@@ -20,5 +21,9 @@ class BuildingRepository
          ->orderby("name", "ASC")->get();
 
       // return Building::all();
+   }
+   public function getBuilingDropdown($societyId)
+   {
+      return Building::where('society_id', $societyId)->select('name', 'id')->get(); 
    }
 }

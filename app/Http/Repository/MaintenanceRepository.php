@@ -4,10 +4,17 @@
 namespace App\Http\Repository;
 
 use App\Models\MaintenanceRecord;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class MaintenanceRepository
 {
+    private $userId = null;
+    public function __construct()
+    {
+        $societyUser = Auth::guard('society_user')->user();
+        $this->userId = $societyUser->id;
+    }
     public function baseQuery(Request $request)
     {
 
@@ -16,6 +23,7 @@ class MaintenanceRepository
         $flat_type = $request->input('flat_type', null);
 
         return MaintenanceRecord::with(['flat.flatType', 'building'])
+            ->where('society_id', $this->userId)
             ->when($request->year, function ($q) use ($request) {
                 $q->where('year', $request->year);
             })

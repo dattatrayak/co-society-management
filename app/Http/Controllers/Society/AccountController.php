@@ -4,23 +4,26 @@ namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
 use App\Http\Repository\AccountRepository;
-use App\Http\Repository\BuildingRepository;
-use App\Http\Repository\MeterRepository;
-use App\Models\Building;
+use App\Http\Repository\CashCategoryRepository;
 use App\Models\ElectricityMeter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\JournalExport;
 class AccountController extends Controller
 {
     private $userId = null;
-    private $accountRepository = null; 
+    private $accountRepository = null;
+    private $cashCategoryRepository = null;
 
-    public function __construct(AccountRepository $accountRepository )
-    {
+    public function __construct(
+        AccountRepository $accountRepository,
+        CashCategoryRepository $cashCategoryRepository
+    ) {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
         $this->accountRepository = $accountRepository;
+        $this->cashCategoryRepository = $cashCategoryRepository;
     }
     /**
      * Display a listing of the resource.
@@ -28,7 +31,10 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         $balance = $this->accountRepository->getBalances();
-        return view('society.account.index', compact('balance'));
+        $accountCategories = $this->cashCategoryRepository->getCategoryDropdown();
+        $entries =  $this->accountRepository->paginate($request);
+        $payment_mode = getPaymentModeArray();
+        return view('society.account.index', compact('balance', 'entries', 'accountCategories', 'payment_mode', 'request'));
     }
 
     /**
@@ -43,19 +49,7 @@ class AccountController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-
-        $request->validate([
-            'building_id' => 'required|exists:buildings,id',
-            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter'
-        ]);
-        $insertData = $request->all();
-        $insertData['society_id'] = $this->userId;
-        ElectricityMeter::create($request->all());
-
-        return redirect()->route('society.meter.index')->with('success', 'Meter created successfully.');
-    }
+    public function store(Request $request) {}
     /**
      * Display the specified resource.
      */
@@ -67,35 +61,20 @@ class AccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ElectricityMeter $meter)
-    {
-        //$buildings = $this->buildingRepository->getSocietyBuilding($this->userId);
-        return view('society.meter.edit', compact('meter', 'buildings'));
-    }
+    public function edit(ElectricityMeter $meter) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ElectricityMeter $meter)
-    {
-
-        $request->validate([
-            'building_id' => 'required|exists:buildings,id',
-            'electricity_meter' => 'required|unique:electricity_meters,electricity_meter,' . $meter->id
-        ]);
-        $insert = $request->all();
-        $insertData['society_id'] = $this->userId;
-        $meter->update($insert);
-
-        return redirect()->route('society.meter.index')->with('success', 'Electricity Meter type updated successfully.');
-    }
+    public function update(Request $request, ElectricityMeter $meter) {}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ElectricityMeter $meter)
+    public function destroy(ElectricityMeter $meter) {}
+
+    public function download(Request $request)
     {
-        $meter->delete();
-        return redirect()->route('society.meter.index')->with('success', 'Electricity Meter deleted successfully.');
+        return Excel::download(new JournalExport($request), 'journal.xlsx');
     }
 }

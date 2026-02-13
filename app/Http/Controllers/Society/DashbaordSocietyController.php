@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Menu;
+use App\Http\Repository\AccountRepository;
+use Illuminate\Support\Facades\Auth;
 
 class DashbaordSocietyController extends Controller
 {
-    /**
-     *used to show dashboard on load
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
+    private $userId = null;
+    private $accountRepository = null;
+
+    public function __construct(AccountRepository $accountRepository)
+    {
+        $societyUser = Auth::guard('society_user')->user();
+        $this->userId = $societyUser->id;
+        $this->accountRepository = $accountRepository;
+    }
     public function dashboard()
     {
-        return view('society.dashboard.index');
+        $balance = $this->accountRepository->getBalances();
+        return view('society.dashboard.index', compact('balance'));
     }
 }

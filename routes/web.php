@@ -74,6 +74,8 @@ Route::prefix('society')
         Route::resource('meter', MetterController::class);
         Route::resource('member', SocietyMemberController::class);
         Route::get('flats-by-building/{building_id}', [FlatController::class, 'getFlatsByBuilding']);
+        Route::get('account/download', [AccountController::class, 'download'])
+        ->name('account.export');
         Route::resource('account', AccountController::class);
         Route::resource('maintenance', MaintenanceController::class);
         Route::resource('setting', SocietySettingController::class);

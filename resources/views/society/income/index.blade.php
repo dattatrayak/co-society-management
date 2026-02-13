@@ -11,20 +11,81 @@
             </a>
         </div>
         <div class="col-xl-12">
-            
+
             <form method="GET" action="{{ route('society.income.index') }}" class="mb-3">
                 <div class="row mt-2">
                     <!-- Search -->
                     <div class="col-md-4">
                         <input type="text" name="search" class="form-control"
-                            placeholder="flat Number" value="{{ request('search') }}">
+                            placeholder="search " value="{{ request('search') }}">
                     </div>
-
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <div class="col-md-3">
+                        <select name="cash_category_id" class="form-control">
+                            <option value="">--Select expencess Category--</option>
+                            @foreach($cashCategories as $cat)
+                            <option value="{{ $cat->id }}"
+                                {{ (isset($request) && $request->cash_category_id == $cat->id) ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
-            </form> 
+                <div class="row mt-2">
+                    <div class="col-md-2">
+                        <label>From Date</label>
+                        <input type="date" name="expense_from_date" id="expense_from_date" class="form-control"
+                            value="{{ $request->expense_from_date ??  ''  }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label>To Date</label>
+                        <input type="date" name="expense_to_date" id="expense_to_date" class="form-control"
+                            value="{{ $request->expense_to_date ?? '' }}">
+                    </div>
+                    <div class="col-md-1">
+                        <label>From Month</label>
+                        <select name="from_month" id="from_month" class="form-control">
+                            <option value="">-Month-</option>
+                            @foreach(range(1,12) as $m)
+                            <option value="{{ $m }}"
+                                {{ (isset($request) && $request->from_month == $m) ? 'selected' : '' }}>
+                                {{ date('F', mktime(0,0,0,$m,1)) }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label>To Year</label>
+                        <input type="number" name="to_year" class="form-control" value="{{ $request->to_year }}">
+                    </div>
+                    <div class="col-md-1">
+                        <label>Status</label>
+                        <select name="status" class="form-control">
+                            <option value="">-Status-</option>
+                            <option value="paid" {{ isset($request) && $request->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                            <option value="pending" {{ isset($request) && $request->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label>Mode</label>
+                        <select name="payment_mode" class="form-control">
+                            <option value="">-Payment-</option>
+                            @foreach($payment_mode as $mode)
+                            <option value="{{ $mode }}"
+                                {{ (isset($request) && $request->payment_mode == $mode) ? 'selected' : '' }}>
+                                {{ ucfirst($mode) }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-4">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                    <div class="col-md-1 mt-4">
+                        <a type="reset" class="btn btn-primary w-100" href="{{ route('society.expencess.index') }}">Clear</a>
+                    </div>
+                </div>
+            </form>
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>

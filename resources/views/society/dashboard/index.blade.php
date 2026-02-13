@@ -43,6 +43,35 @@
     </div>
     <div class="row">
         <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    Account Balance
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Total Cash Balance</h5>
+                    <p class="card-text">{{ $balance['cash'] }}</p>
+
+                    <h5 class="card-title">Total Bank Balance</h5>
+                    <p class="card-text">{{ $balance['bank'] }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    Total Pending
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Income Cash Painding: {{ $balance['pending_income_cash']->total_amount ?? 0 }} </p>
+                    <p class="card-text">Income Bank Painding: {{ $balance['pending_income_bank']->total_amount ?? 0 }}</p>
+                    <p class="card-text">Expences Cash Painding: {{ $balance['pending_expense_cash']->total_amount ?? 0 }}</p>
+                    <p class="card-text">Expences Bank Painding: {{ $balance['pending_expense_bank']->total_amount ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6">
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-chart-area me-1"></i>

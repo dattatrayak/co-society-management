@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\CashCategoryRepository;
+use App\Http\Repository\SocietyMemberRepository;
 use App\Http\Repository\ExpencessRepository;
+use App\Http\Repository\FlatRepository;
 use App\Models\Expense;
 use App\Models\CashTransaction;
 use App\Models\CashCategory;
@@ -19,27 +22,32 @@ class ExpenseController extends Controller
 {
     private $userId = null;
 
-    public function __construct(private ExpencessRepository $expencessRepository)
-    {
+    public function __construct(
+        private ExpencessRepository $expencessRepository,
+        private SocietyMemberRepository $societyMemberRepository,
+        private CashCategoryRepository $cashCategoryRepository
+    ) {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
     }
     public function index(Request $request)
     {
-        $expenses = Expense::with(['cashCategory', 'member'])
-            ->when($request->year, fn($q) => $q->whereYear('expense_date', $request->year))
-            ->when($request->month, fn($q) => $q->whereMonth('expense_date', $request->month))
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->orderByDesc('expense_date')
-            ->paginate(15);
-
-        return view('society.expenses.index', compact('expenses'));
+        $request->validate([
+            'expense_from_date' => 'nullable|date',
+            'expense_to_date'   => 'nullable|date|after_or_equal:expense_from_date',
+        ], [
+            'expense_to_date.after_or_equal' => 'To date must be greater than or equal to From date.',
+        ]);
+        $payment_mode = getPaymentModeArray();
+        $cashCategories = $this->cashCategoryRepository->getExpencessCategoryDropdown();
+        $expenses = $this->expencessRepository->paginate($request);
+        return view('society.expenses.index', compact('expenses', 'cashCategories', 'request', 'payment_mode'));
     }
 
     public function create()
     {
-        $cashCategories = CashCategory::select('id', 'name')->where('type', 'expense')->get();
-        $members = SocietyMember::all();
+        $cashCategories = $this->cashCategoryRepository->getExpencessCategoryDropdown();
+        $members = $this->societyMemberRepository->getSocietyMemberList();
         $frequency = generateRecurringExpenses();
         $payment_mode = getPaymentModeArray();
         return view('society.expenses.create', compact(
@@ -136,8 +144,8 @@ class ExpenseController extends Controller
             $parentExpense = Expense::find($expense->parent_expense_id);
         }
         //  dd($expense->parent_expense_id);
-        $cashCategories = CashCategory::select('id', 'name')->where('type', 'expense')->get();
-        $members = SocietyMember::all();
+        $cashCategories = $this->cashCategoryRepository->getExpencessCategoryDropdown();
+        $members = $this->societyMemberRepository->getSocietyMemberList();
         $frequency = generateRecurringExpenses();
         $payment_mode = getPaymentModeArray();
         return view('society.expenses.create', compact(
@@ -175,9 +183,6 @@ class ExpenseController extends Controller
 
         try {
 
-            /* ===============================
-           Handle attachment upload
-        ================================*/
             if ($request->hasFile('attachment')) {
 
                 // Delete old attachment if exists
@@ -195,9 +200,6 @@ class ExpenseController extends Controller
                 $data['attachment'] = $expense->attachment;
             }
 
-            /* ===============================
-           Update cash transaction
-        ================================*/
             if ($data['status'] == 'paid' && $expense->cash_transactions_id) {
                 $expense->cashTransaction->update([
                     'cash_category_id' => $data['cash_category_id'],
@@ -221,9 +223,7 @@ class ExpenseController extends Controller
                 ]);
             }
 
-            /* ===============================
-           Update expense
-        ================================*/
+
             $expense->update([
                 'cash_category_id' => $data['cash_category_id'],
                 'society_members_id' => $data['member_id'] ?? null,

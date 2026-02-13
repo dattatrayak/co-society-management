@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Society;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\CashCategoryRepository;
 use App\Http\Repository\ExpencessRepository;
+use App\Http\Repository\IncomeRepository;
 use App\Models\Expense;
 use App\Models\CashTransaction;
 use App\Models\CashCategory;
@@ -18,24 +20,26 @@ class IncomeController extends Controller
 {
     private $userId = null;
 
-    public function __construct(private ExpencessRepository $expencessRepository)
+    public function __construct(private ExpencessRepository $expencessRepository,
+    private CashCategoryRepository $cashCategoryRepository,
+    private IncomeRepository $incomeRepository )
     {
         $societyUser = Auth::guard('society_user')->user();
         $this->userId = $societyUser->id;
     }
     public function index(Request $request)
     {
-        $expenses = Expense::with(['cashCategory', 'member'])
-            ->whereHas('cashCategory', function ($q) {
-                $q->where('type', 'income');
-            })
-            ->when($request->year, fn($q) => $q->whereYear('expense_date', $request->year))
-            ->when($request->month, fn($q) => $q->whereMonth('expense_date', $request->month))
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->orderByDesc('expense_date')
-            ->paginate(15);
+        $request->validate([
+            'expense_from_date' => 'nullable|date',
+            'expense_to_date'   => 'nullable|date|after_or_equal:expense_from_date',
+        ], [
+            'expense_to_date.after_or_equal' => 'To date must be greater than or equal to From date.',
+        ]);
+        $payment_mode = getPaymentModeArray();
+        $cashCategories = $this->cashCategoryRepository->getIncomeCategoryDropdown();
+        $expenses = $this->incomeRepository->paginate($request);
 
-        return view('society.income.index', compact('expenses'));
+        return view('society.income.index', compact('expenses','payment_mode','cashCategories','request'));
     }
 
     public function create()
